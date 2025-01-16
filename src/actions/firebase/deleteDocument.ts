@@ -2,8 +2,8 @@
 
 import { doc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { FirebaseError } from "../addDocument";
 import { revalidatePath } from "next/cache";
+import { FirebaseError } from "./addDocument";
 
 export async function deleteDocument(
   collectionName: string,
