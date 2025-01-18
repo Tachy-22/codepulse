@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 export type FirebaseError = {
@@ -11,20 +11,22 @@ export type FirebaseError = {
 export async function addDocument<T extends Record<string, unknown>>(
   collectionName: string,
   data: T,
-  path: string
+  documentId: string,
+  revalidatePathStr: string = "/"
 ): Promise<{ id: string; data: T } | FirebaseError> {
   try {
     if (!collectionName || !data) {
       throw new Error("Missing required parameters");
     }
 
-    const collectionRef = collection(db, collectionName);
-    const docRef = await addDoc(collectionRef, {
+    const docRef = doc(db, collectionName, documentId);
+    await setDoc(docRef, {
       ...data,
       createdAt: new Date().toISOString(),
     });
-    revalidatePath(path);
-    return { id: docRef.id, data };
+    
+    revalidatePath(revalidatePathStr);
+    return { id: documentId, data };
   } catch (error) {
     return {
       code: "add-document-error",

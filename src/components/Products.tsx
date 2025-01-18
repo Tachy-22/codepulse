@@ -1,26 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
-import { fetchCollection } from "@/actions/firebase/fetchCollection";
-import { ProductT } from "@/types";
+
 import { ExpandableCardDemo } from "./SnipetsGallery";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 const Products = () => {
-  const [products, setProducts] = useState<ProductT[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const getProducts = async () => {
-      const result = await fetchCollection<ProductT>("products");
-      if ("items" in result) {
-        setProducts(result.items);
-      }
-      setLoading(false);
-    };
-
-    getProducts();
-  }, []);
-
-  if (loading) {
+  const { products } = useAppSelector((state) => state.productSlice);
+  console.log({ products });
+  if (products === null) {
     return (
       <div className="w-full mx-auto px-4 pt-[1rem] grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[...Array(6)].map((_, i) => (

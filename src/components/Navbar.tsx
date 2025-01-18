@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { FaCode } from "react-icons/fa";
 import SearchModal from "./SearchModal";
 
-import UserDropdown from "./UserDropdown";
+import UserDropdown from "../hooks/UserDropdown";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function Navbar() {
       className="relative flex items-center rounded-xl cursor-pointer flex-1"
       onClick={() => setIsSearchOpen(true)}
     >
-      <div className="px-4 py-2 w-full md:w-64 rounded-xl border border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg text-gray-400 dark:text-gray-500">
+      <div className="px-4 py-2 w-full md:w-64 rounded-xl border border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg text-gray-400 dark:text-gray-500 hidden lg:block">
         Search...
       </div>
       <Search className="absolute right-3 h-5 w-5 text-gray-400" />
@@ -56,7 +56,11 @@ export default function Navbar() {
   const AuthButtons = () => (
     <>
       {userId ? (
-        <UserDropdown email={user.email} purchases={user.purchases} />
+        <UserDropdown
+          email={user.email}
+          purchases={user.purchases}
+          role={user.role as string} // Add role prop
+        />
       ) : (
         <Link
           href="/auth/login"
@@ -113,10 +117,10 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`sticky w-full top-0 backdrop-blur-lg z-[100] ${
+        className={`border-b sticky w-full top-0 backdrop-blur-lg z-[1000] ${
           scrolled
-            ? "border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm"
-            : ""
+            ? " border-gray-200/50 dark:border-gray-700/50 shadow-sm"
+            : "border-transparent"
         }`}
       >
         <div className="max-w-[90rem] mx-auto px-6 lg:px-8 py-[0.4rem]">
@@ -133,11 +137,16 @@ export default function Navbar() {
               <NavLinks />
             </div>
 
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-end lg:items-center w-full space-x-4">
               <SearchBar />
-
-              <AuthButtons />
-              <ThemeToggle />
+              <div className="hidden lg:flex">
+                {" "}
+                <AuthButtons />
+              </div>
+              <div className="hidden lg:flex">
+                {" "}
+                <ThemeToggle />
+              </div>
             </div>
 
             {/* Mobile Navigation */}

@@ -21,6 +21,7 @@ export type QueryOptions = {
   orderByField?: string;
   orderDirection?: "asc" | "desc";
   limitTo?: number;
+  exclude?: string[]; // New option for excluding fields
 };
 
 export type FirebaseError = {
@@ -63,6 +64,11 @@ export async function fetchCollection<T>(
       // Transform data to ensure all fields are plain objects or primitives
       const transformedData = Object.entries(data).reduce(
         (acc, [key, value]) => {
+          // Skip excluded fields
+          if (options?.exclude?.includes(key)) {
+            return acc;
+          }
+
           if (value instanceof Timestamp) {
             acc[key] = value.toDate().toISOString(); // Convert Timestamp to ISO string
           } else if (typeof value === "object" && value !== null) {
@@ -75,10 +81,6 @@ export async function fetchCollection<T>(
         },
         {} as Record<string, unknown>
       );
-      console.log({
-        id: doc.id,
-        ...transformedData,
-      });
       return {
         id: doc.id,
         ...transformedData,

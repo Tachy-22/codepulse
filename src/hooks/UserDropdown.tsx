@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 interface UserDropdownProps {
   email: string;
   purchases?: string[];
+  role?: string;  // Add role to props
 }
 
-export default function UserDropdown({ email, purchases }: UserDropdownProps) {
+export default function UserDropdown({ email, purchases, role }: UserDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -82,6 +84,16 @@ export default function UserDropdown({ email, purchases }: UserDropdownProps) {
                 </motion.span>
               )}
             </div>
+            {role === "ADMIN" && (
+              <motion.div
+                whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                className="-t -gray-200/50 dark:-gray-700/50"
+              >
+                <Link href="/admin/add-product" className="w-full">
+                  Add Product
+                </Link>
+              </motion.div>
+            )}
             <motion.div
               whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
               className="-t -gray-200/50 dark:-gray-700/50"

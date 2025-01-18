@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-click-outside";
@@ -7,6 +6,28 @@ import { ProductT } from "@/types";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { createCheckoutSession } from "@/actions/stripe/stripe";
 import Link from "next/link";
+
+const gradientMap = new Map<string, string>();
+
+const getRandomGradient = (id: string) => {
+  if (gradientMap.has(id)) {
+    return gradientMap.get(id);
+  }
+
+  const gradients = [
+    'linear-gradient(45deg, #FF0000, #00FF00)',
+    'linear-gradient(45deg, #FF00FF, #FFFF00)',
+    'linear-gradient(45deg, #00FFFF, #FF0000)',
+    'linear-gradient(45deg, #FF1493, #00FA9A)',
+    'linear-gradient(45deg, #FF4500, #00CED1)',
+    'linear-gradient(45deg, #9400D3, #FFD700)',
+    'linear-gradient(45deg, #FF69B4, #7FFF00)',
+  ];
+  
+  const gradient = gradients[Math.floor(Math.random() * gradients.length)];
+  gradientMap.set(id, gradient);
+  return gradient;
+};
 
 interface Card {
   id: string;
@@ -16,6 +37,7 @@ interface Card {
   ctaText: string;
   ctaLink: string;
   price: number;
+  currentLevel: string[];
   content: () => React.ReactNode;
 }
 
@@ -110,17 +132,11 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
               ref={ref}
               className="w-full max-w-[500px]  h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
             >
-              <motion.div layoutId={`image-${active.title}-${id}`}>
-                <Image
-                  priority
-                  width={200}
-                  height={200}
-                  src={active.src}
-                  alt={active.title}
-                  className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-top"
-                />
-              </motion.div>
-
+              <motion.div 
+                layoutId={`image-${active.title}-${id}`}
+                className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg"
+                style={{ background: active.src }}
+              />
               <div>
                 <div className="flex flex-col gap-5 justify-between items-start p-4">
                   <div className="">
@@ -130,15 +146,16 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                     >
                       {active.title}
                     </motion.h3>
-                    <motion.p
-                      layoutId={`description-${active.description}-${id}`}
-                      className="text-neutral-600 dark:text-neutral-400 text-base"
-                    >
-                      {active.description}
-                    </motion.p>
+                    <ul className="list-disc pl-5 mt-2 space-y-1">
+                      {active.currentLevel.map((level, index) => (
+                        <li key={index} className="text-neutral-600 dark:text-neutral-400 text-sm">
+                          {level}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  {user?.purchases?.includes(active.id) ? (
+                  {user?.purchases?.includes(active.id) || active.price === 0 ? (
                     <Link
                       onClick={() => setActive(null)}
                       href={active.ctaLink}
@@ -163,19 +180,6 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                 {error && (
                   <p className="text-red-500 text-sm px-4 mb-2">{error}</p>
                 )}
-                {/* <div className="pt-4 relative px-4">
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto dark:text-neutral-400 [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
-                  >
-                    {typeof active.content === "function"
-                      ? active.content()
-                      : active.content}
-                  </motion.div>
-                </div> */}
               </div>
             </motion.div>
           </div>
@@ -188,10 +192,11 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
             id: project.id,
             description: project.description,
             title: project.title,
-            src: project.imageUrl || "https://via.placeholder.com/400",
+            src: getRandomGradient(project.id) as string,
             ctaText: "Get Code",
             ctaLink: `/products/${project.id}`,
             price: project.price,
+            currentLevel: project.currentLevel || [], // Assuming currentLevel exists in ProductT
             content: () => (
               <div>
                 <p>{project.description}</p>
@@ -209,15 +214,11 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                 onClick={() => setActive(card)}
                 className="p-4 flex flex-col hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer border  border-slate-300 dark:border-slate-500"
               >
-                <motion.div layoutId={`image-${card.title}-${id}`}>
-                  <Image
-                    width={100}
-                    height={100}
-                    src={card.src}
-                    alt={card.title}
-                    className="w-full h-60 rounded-lg object-cover object-top"
-                  />
-                </motion.div>
+                <motion.div 
+                  layoutId={`image-${card.title}-${id}`}
+                  className="w-full h-60 rounded-lg"
+                  style={{ background: card.src }}
+                />
                 <div className="flex flex-col mt-4">
                   <motion.h3
                     layoutId={`title-${card.title}-${id}`}
@@ -225,18 +226,12 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                   >
                     {card.title}
                   </motion.h3>
-                  {/* <motion.p
-                    layoutId={`description-${card.description}-${id}`}
-                    className="text-neutral-600 dark:text-neutral-400 text-base"
-                  >
-                    {card.description}
-                  </motion.p> */}
                 </div>
-                {hasPurchased && (
+                {hasPurchased || project.price === 0 ? (
                   <span className="text-green-600 text-sm mt-2">
-                    ✓ Purchased
+                    {project.price === 0 ? "✓ Free" : "✓ Purchased"}
                   </span>
-                )}
+                ) : null}
               </motion.div>
             </div>
           );

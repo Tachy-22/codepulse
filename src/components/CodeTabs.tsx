@@ -12,7 +12,7 @@ const CodeTabs = ({ tabs }: { tabs: TabData[] }) => {
   const isTypeScript = useSelector(
     (state: RootState) => state.jsTs.isTypeScript
   );
-  console.log({ tabs });
+  console.log({ tabs, isTypeScript });
 
   const filteredTabs = tabs.filter((tab) => {
     const extension = tab.title.split(".").pop()?.toLowerCase();

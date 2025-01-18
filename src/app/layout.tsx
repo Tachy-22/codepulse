@@ -42,13 +42,15 @@ export default async function RootLayout({
 
   let userData = null;
   const userId = userIdFromCookie;
-
+  console.log({ userId });
   if (userId) {
     const result = await fetchDocument<UserData>("users", userId);
     if (result && "data" in result) {
       userData = result;
     }
   }
+
+  console.log({ userData });
   return (
     <html lang="en">
       <body
@@ -64,7 +66,9 @@ export default async function RootLayout({
             >
               {" "}
               <Navbar />
-              <div className="h-full   ">{children}</div>
+              <div className="h-full   ">
+                {children}
+              </div>
               <Footer />
             </ThemeProvider>
           </UserDataProvider>

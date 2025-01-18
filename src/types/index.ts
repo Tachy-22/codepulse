@@ -10,6 +10,7 @@ export interface ProductT {
   updatedAt: string;
   imageUrl?: string;
   files: TabData[];
+  currentLevel: string[];
 }
 
 export interface User {
@@ -17,4 +18,13 @@ export interface User {
   email: string;
   displayName: string;
   purchases?: string[];
+}
+
+export interface ProductData extends ProductT {
+  installations: Array<{ title: string; description: string; code: string }>;
+  fileTree: string;
+  currentLevel: string[];
+  optimizationSuggestions: string[];
+  usefulLinks: Array<{ title: string; href: string }>;
+  [key: string]: unknown;
 }

@@ -1,22 +1,31 @@
 import React from "react";
 import SideNavigation from "@/components/SideNavigation";
 import { fetchCollection } from "@/actions/firebase/fetchCollection";
-import { ProductT } from "@/types";
+import { ProductData } from "@/types";
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 const layout = async ({ children }: LayoutProps) => {
-  const result = await fetchCollection<ProductT>("products");
-  const products = 'items' in result ? result.items : [];
+  const result = await fetchCollection<ProductData>("products", {
+    exclude: [
+      "files",
+      "fileTree",
+      "optimizationSuggestions:",
+      "installations",
+      "usefulLinks",
+    ],
+  });
+  const products = "items" in result ? result.items : [];
 
   return (
-    <div className="flex max-w-[90rem] mx-auto max-w-screen overflow-x-hidden px-3  o">
+    <div className="flex max-w-[90rem] mx-auto overflow-x-hidden px-3">
       <SideNavigation products={products} />
-      <main className="p-2 lg:p-6 w-full flex-1">{children}</main>
+      <main className="p-2 lg:p-6 w-full flex-1 max-h-[calc(100vh-0rem)] overflow-y-auto md: border-l dark:border-gray-800">
+        {children}
+      </main>
     </div>
   );
 };
-
 export default layout;
