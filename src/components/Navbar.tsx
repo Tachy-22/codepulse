@@ -45,6 +45,7 @@ export default function Navbar() {
   const NavLinks = () => (
     <>
       <Link
+        onClick={() => setIsOpen(false)}
         href="/products"
         className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
       >
@@ -73,33 +74,30 @@ export default function Navbar() {
   );
 
   const MobileMenu = () => (
-    <>
-      <AnimatePresence>
-        {isOpen && (
+    <AnimatePresence>
+      {isOpen && (
+        <>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3 }}
             className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
             onClick={() => setIsOpen(false)}
           />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {isOpen && (
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 30
+              duration: 0.3,
+              ease: "easeInOut",
             }}
             className="fixed top-0 right-0 h-screen w-screen lg:w-[30rem] shadow-lg p-6 z-50 bg-white dark:bg-zinc-950"
           >
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-between mb-4">
+              <ThemeToggle />
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -112,9 +110,9 @@ export default function Navbar() {
               <NavLinks />
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </>
+      )}
+    </AnimatePresence>
   );
 
   return (
@@ -146,7 +144,10 @@ export default function Navbar() {
             <div className="flex items-center justify-end lg:justify-start w-full lg:gap-4 gap-0">
               <SearchBar />
               <AuthButtons />
-              <ThemeToggle />
+              <div className="lg:flex hidden">
+                {" "}
+                <ThemeToggle />
+              </div>
             </div>
 
             {/* Mobile Navigation */}

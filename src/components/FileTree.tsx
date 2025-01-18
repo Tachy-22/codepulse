@@ -40,7 +40,7 @@ const FileTree: React.FC<FileTreeProps> = ({ content }) => {
   };
 
   return (
-    <div className="font-mono text-sm">
+    <div className="font-mono text-sm overflow-x-auto">
       {lines.filter(line => line.trim()).map((line) => processLine(line))}
     </div>
   );
