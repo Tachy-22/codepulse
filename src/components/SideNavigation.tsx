@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setProducts } from "@/lib/redux/productSlice";
 import { ProductData } from "@/types";
-import { Menu } from "lucide-react";
-import { Button } from "./ui/button";
+import { ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface SideNavigationProps {
   products: ProductData[];
@@ -13,7 +13,7 @@ interface SideNavigationProps {
 
 const SideNavigation = ({ products }: SideNavigationProps) => {
   const dispatch = useDispatch();
-  const [showSideNavOnMobile, setShowSideNavOnMobile] = useState(true);
+  const [showSideNavOnMobile, setShowSideNavOnMobile] = useState(false);
 
   useEffect(() => {
     try {
@@ -33,15 +33,17 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
           : "-translate-x-[calc(20rem-4.25rem)] lg:translate-x-0"
       }`}
     >
-      <div className="translate-x-[calc(16rem-8px)] dark:bg-black/50 bg-white/80  backdrop-blur-2xl w-fit fixed rounded-r-[5px] lg:hidden">
-        <Button
-          className="!p-2"
+      <div className="translate-x-[calc(16rem-8px)] bg-white/80 dark:bg-zinc-800  backdrop-blur-2xl w-fit fixed rounded-r-[5px] lg:hidden">
+        <motion.div
+          className="!p-2 cursor-pointer"
           onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
+          animate={{ rotate: showSideNavOnMobile ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
         >
-          <Menu />
-        </Button>
+          <ChevronRight className="h-4 w-4  " />
+        </motion.div>
       </div>
-      <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/50 backdrop-blur-2xl h-full  py-4  ">
+      <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl h-full  py-4  ">
         <div className="flex flex-col gap-3">
           <div className="px-3 rounded-lg">
             <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">

@@ -73,9 +73,9 @@ export default function Navbar() {
   );
 
   const MobileMenu = () => (
-    <AnimatePresence mode="wait">
-      {isOpen && (
-        <>
+    <>
+      <AnimatePresence>
+        {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -84,14 +84,18 @@ export default function Navbar() {
             className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
             onClick={() => setIsOpen(false)}
           />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isOpen && (
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ 
+            transition={{
               type: "spring",
-              bounce: 0,
-              duration: 0.5
+              stiffness: 300,
+              damping: 30
             }}
             className="fixed top-0 right-0 h-screen w-screen lg:w-[30rem] shadow-lg p-6 z-50 bg-white dark:bg-zinc-950"
           >
@@ -108,9 +112,9 @@ export default function Navbar() {
               <NavLinks />
             </div>
           </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+    </>
   );
 
   return (
@@ -119,7 +123,7 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`border-b sticky w-full top-0 backdrop-blur-lg z-[1000] ${
+        className={`border-b sticky w-full top-0 backdrop-blur-lg bg-white/80 dark:bg-black/80 z-[1000] ${
           scrolled
             ? " border-zinc-200/50 dark:border-zinc-700/50 shadow-sm"
             : "border-transparent"
