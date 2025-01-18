@@ -42,13 +42,16 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="fixed  right-0 left-0 lg:top-[9rem] mx-auto z-[200] w-full max-w-3xl  bg-white dark:bg-gray-950 lg:rounded-xl shadow-lg py-8 lg:p-6 border border-gray-200 dark:border-gray-800 h-screen lg:h-fit"
+            className="fixed  right-0 left-0 lg:top-[9rem] mx-auto z-[200] lg:w-full w-screen lg:max-w-3xl  bg-white dark:bg-zinc-950 lg:rounded-xl shadow-lg py-8 px-6 lg:p-6 border border-zinc-200 dark:border-zinc-800 h-screen lg:h-fit"
           >
             <Button
               onClick={onClose}
               className="absolute right-0 top-0 w-fit flex items-end"
             >
-              <X />
+              <X
+                size={14}
+                className=" hover:text-red-500 hover:border border-red-500 rounded-full"
+              />
             </Button>
             <div className="relative">
               <input
@@ -56,10 +59,10 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search snippets..."
-                className="w-full px-4 py-2 rounded-xl border border-gray-200/70 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-4 py-2 rounded-xl border border-zinc-200/70 dark:border-zinc-700/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 autoFocus
               />
-              <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
+              <Search className="absolute right-3 top-2.5 h-5 w-5 text-zinc-400" />
             </div>
 
             {results.length > 0 && (
@@ -69,16 +72,16 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     onClick={onClose}
                     href={"/products/" + result.id}
                     key={index}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800/60 rounded-lg cursor-pointer transition-colors duration-100"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-lg cursor-pointer transition-colors duration-100"
                   >
                     <div className="flex-shrink-0 w-4 h-4">
-                      <Search className="w-4 h-4 text-gray-400" />
+                      <Search className="w-4 h-4 text-zinc-400" />
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm text-gray-700 dark:text-gray-200">
+                      <span className="text-sm text-zinc-700 dark:text-zinc-200">
                         {result.title}
                       </span>
-                      <span className="text-xs text-gray-400">Snippet</span>
+                      <span className="text-xs text-zinc-400">Snippet</span>
                     </div>
                   </Link>
                 ))}

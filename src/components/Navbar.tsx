@@ -35,10 +35,10 @@ export default function Navbar() {
       className="relative flex items-center rounded-xl cursor-pointer flex-1"
       onClick={() => setIsSearchOpen(true)}
     >
-      <div className="px-4 py-2 w-full md:w-64 rounded-xl border border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg text-gray-400 dark:text-gray-500 hidden lg:block">
+      <div className="px-4 py-2 w-full md:w-64 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg text-zinc-400 dark:text-zinc-500 hidden lg:block">
         Search...
       </div>
-      <Search className="absolute right-3 h-5 w-5 text-gray-400" />
+      <Search className="absolute right-3 h-5 w-5 text-zinc-400" />
     </motion.div>
   );
 
@@ -46,7 +46,7 @@ export default function Navbar() {
     <>
       <Link
         href="/products"
-        className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+        className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
       >
         CP Snippets{" "}
       </Link>
@@ -73,7 +73,7 @@ export default function Navbar() {
   );
 
   const MobileMenu = () => (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <>
           <motion.div
@@ -88,8 +88,12 @@ export default function Navbar() {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-            className="fixed top-0 right-0 h-screen w-screen lg:w-[30rem]  shadow-lg p-6 z-50 bg-white dark:bg-gray-950"
+            transition={{ 
+              type: "spring",
+              bounce: 0,
+              duration: 0.5
+            }}
+            className="fixed top-0 right-0 h-screen w-screen lg:w-[30rem] shadow-lg p-6 z-50 bg-white dark:bg-zinc-950"
           >
             <div className="flex justify-end mb-4">
               <Button
@@ -101,9 +105,7 @@ export default function Navbar() {
               </Button>
             </div>
             <div className="flex flex-col space-y-4">
-              <SearchBar />
               <NavLinks />
-              <AuthButtons />
             </div>
           </motion.div>
         </>
@@ -119,7 +121,7 @@ export default function Navbar() {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className={`border-b sticky w-full top-0 backdrop-blur-lg z-[1000] ${
           scrolled
-            ? " border-gray-200/50 dark:border-gray-700/50 shadow-sm"
+            ? " border-zinc-200/50 dark:border-zinc-700/50 shadow-sm"
             : "border-transparent"
         }`}
       >
@@ -137,21 +139,14 @@ export default function Navbar() {
               <NavLinks />
             </div>
 
-            <div className="flex items-end lg:items-center w-full space-x-4">
+            <div className="flex items-center justify-end lg:justify-start w-full lg:gap-4 gap-0">
               <SearchBar />
-              <div className="hidden lg:flex">
-                {" "}
-                <AuthButtons />
-              </div>
-              <div className="hidden lg:flex">
-                {" "}
-                <ThemeToggle />
-              </div>
+              <AuthButtons />
+              <ThemeToggle />
             </div>
 
             {/* Mobile Navigation */}
             <div className="flex items-center space-x-4 md:hidden">
-              <ThemeToggle />
               <Button
                 variant="ghost"
                 size="icon"

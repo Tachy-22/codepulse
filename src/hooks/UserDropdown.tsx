@@ -7,14 +7,19 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 interface UserDropdownProps {
   email: string;
   purchases?: string[];
-  role?: string;  // Add role to props
+  role?: string; // Add role to props
 }
 
-export default function UserDropdown({ email, purchases, role }: UserDropdownProps) {
+export default function UserDropdown({
+  email,
+  purchases,
+  role,
+}: UserDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -30,7 +35,10 @@ export default function UserDropdown({ email, purchases, role }: UserDropdownPro
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -45,14 +53,23 @@ export default function UserDropdown({ email, purchases, role }: UserDropdownPro
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-colors duration-200"
+        className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-colors duration-200 "
       >
-        <span className="text-gray-700 dark:text-gray-300">{email}</span>
+        <span className="text-gray-700 dark:text-gray-300 lg:flex hidden">
+          {email}
+        </span>
+        <Image
+          src="/avatar.svg"
+          alt="Avatar"
+          width={40}
+          height={40}
+          className="rounded-full border flex lg:hidden bg-slate-600"
+        />
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className="h-4 w-4 lg:flex hidden " />
         </motion.div>
       </motion.button>
 
@@ -71,9 +88,10 @@ export default function UserDropdown({ email, purchases, role }: UserDropdownPro
               </p>
             </div>
             <div className="p-3 flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-gray-600 dark:text-gray-400 ">
                 {email}
               </span>
+
               {purchases && purchases.length > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
@@ -89,7 +107,7 @@ export default function UserDropdown({ email, purchases, role }: UserDropdownPro
                 whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
                 className="-t -gray-200/50 dark:-gray-700/50"
               >
-                <Link href="/admin/add-product" className="w-full">
+                <Link href="/admin/add-product" className="w-full p-3">
                   Add Product
                 </Link>
               </motion.div>
@@ -101,7 +119,7 @@ export default function UserDropdown({ email, purchases, role }: UserDropdownPro
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-3 text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
+                className="w-full text-left px-4 py-3 text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200 b"
               >
                 Logout
               </motion.button>
