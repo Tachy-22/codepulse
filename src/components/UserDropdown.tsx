@@ -53,7 +53,7 @@ export default function UserDropdown({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 lg:px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-colors duration-200 "
+        className="flex items-center gap-2 lg:px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-zinc-900 transition-colors duration-200 "
       >
         <span className="text-gray-700 dark:text-gray-300 lg:flex hidden">
           {email}
@@ -81,7 +81,7 @@ export default function UserDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute right-0 mt-2 w-fit bg-white dark:bg-gray-900 backdrop-blur-lg rounded-xl shadow-lg  -gray-200/50 dark:-gray-700/50 overflow-hidden"
+            className="absolute right-0 mt-2 w-fit bg-gray-50 dark:bg-zinc-900 backdrop-blur-lg rounded-xl shadow-lg  -gray-200/50 dark:-gray-700/50 overflow-hidden"
           >
             <div className="p-3 -b -gray-200/50 dark:-gray-700/50">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -106,7 +106,7 @@ export default function UserDropdown({
             {role === "ADMIN" && (
               <motion.div
                 whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
-                className="-t -gray-200/50 dark:-gray-700/50"
+                className=" hover:bg-gray-200/50 dark:hover:bg-zinc-800"
               >
                 <Link href="/admin/add-product" className="w-full p-3">
                   Add Product

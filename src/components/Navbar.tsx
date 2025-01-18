@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { FaCode } from "react-icons/fa";
 import SearchModal from "./SearchModal";
 
-import UserDropdown from "../hooks/UserDropdown";
+import UserDropdown from "./UserDropdown";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
