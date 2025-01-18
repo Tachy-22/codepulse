@@ -15,6 +15,9 @@ const config: Config = {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.05)" },
         },
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
         fadeIn: {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
@@ -53,6 +56,7 @@ const config: Config = {
         typing: "typing 3s steps(40) forwards",
         blink: "blink 1s step-end infinite",
         glitch: "glitch 1s infinite",
+        shimmer: "shimmer 1.5s infinite",
       },
       colors: {
         background: "hsl(var(--background))",
