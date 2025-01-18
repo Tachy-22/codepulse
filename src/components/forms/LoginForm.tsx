@@ -59,7 +59,7 @@ export default function LoginForm() {
 
   return (
     <div className="h-[calc(100vh-7rem)] flex items-center justify-center bg-gray-50 dark:bg-black px-4">
-      <div className="w-full max-w-md space-y-8 bg-white dark:bg-black p-8 rounded-lg shadow-sm dark:border dark:border-gray-800">
+      <div className="w-full max-w-md space-y-8 bg-white dark:bg-zinc-950 p-8 rounded-lg shadow-sm d dark:border-gray-800">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Welcome back
@@ -88,7 +88,7 @@ export default function LoginForm() {
             <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-black text-gray-500">
+            <span className="px-2 bg-gray-50 dark:bg-black rounded text-gray-500">
               Or continue with
             </span>
           </div>
@@ -171,7 +171,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-[0.5rem] shadow-sm text-sm font-medium text-white dark:text-gray-900 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-[0.5rem] shadow-sm text-sm font-medium text-white  bg-black dark:bg-blue-600 hover:bg-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? (
               <Loader className="h-5 w-5 animate-spin" />

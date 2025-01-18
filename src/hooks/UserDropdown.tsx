@@ -53,7 +53,7 @@ export default function UserDropdown({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-colors duration-200 "
+        className="flex items-center gap-2 lg:px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-800/80 transition-colors duration-200 "
       >
         <span className="text-gray-700 dark:text-gray-300 lg:flex hidden">
           {email}
@@ -68,8 +68,9 @@ export default function UserDropdown({
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
+          className="lg:flex hidden"
         >
-          <ChevronDown className="h-4 w-4 lg:flex hidden " />
+          <ChevronDown className="h-4 w-4  " />
         </motion.div>
       </motion.button>
 

@@ -141,17 +141,17 @@ export default function Navbar() {
               <NavLinks />
             </div>
 
-            <div className="flex items-center justify-end lg:justify-start w-full lg:gap-4 gap-0">
+            <div className="flex items-center justify-end lg:justify-start w-full lg:gap-4 gap-0 ">
               <SearchBar />
               <AuthButtons />
-              <div className="lg:flex hidden">
+              <div className="md:flex hidden">
                 {" "}
                 <ThemeToggle />
               </div>
             </div>
 
             {/* Mobile Navigation */}
-            <div className="flex items-center space-x-4 md:hidden">
+            <div className="flex items-center  md:hidden">
               <Button
                 variant="ghost"
                 size="icon"

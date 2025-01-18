@@ -145,7 +145,7 @@ const Product = ({
             </h2>
             <div className="relative">
               {currentLevel.map((item, index) => (
-                <div key={index} className="relative pl-8 pb-8 last:pb-0 ml-10">
+                <div key={index} className="relative pl-8 pb-8 last:pb-0 lg:ml-10">
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-blue-500 to-blue-300 dark:from-blue-400 dark:to-blue-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/20" />
                   <div className="ml-4 rounded-xl px-4  transition-all duration-300 ">
@@ -167,7 +167,7 @@ const Product = ({
             </h2>
             <div className="relative">
               {optimizationSuggestions.map((item, index) => (
-                <div key={index} className="relative pl-8 pb-8 last:pb-0 ml-10">
+                <div key={index} className="relative pl-8 pb-8 last:pb-0 lg:ml-10">
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-amber-500 to-amber-300 dark:from-amber-400 dark:to-amber-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg shadow-amber-500/20" />
                   <div className="ml-2 rounded-xl px-4  ansition-all duration-300 ">
@@ -191,7 +191,7 @@ const Product = ({
               {usefulLinks.map((link, index) => (
                 <div
                   key={index}
-                  className="relative pl-8 pb-8 last:pb-0 ml-10 "
+                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10 "
                 >
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-indigo-500 to-indigo-300 dark:from-indigo-400 dark:to-indigo-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-lg shadow-indigo-500/20" />
