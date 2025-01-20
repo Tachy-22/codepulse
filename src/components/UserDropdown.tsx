@@ -53,7 +53,7 @@ export default function UserDropdown({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 lg:px-4 py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-zinc-900 transition-colors duration-200 "
+        className="flex items-center gap-2 lg:px-4 lg:py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-zinc-900 transition-colors duration-200 "
       >
         <span className="text-gray-700 dark:text-gray-300 lg:flex hidden">
           {email}
@@ -106,9 +106,9 @@ export default function UserDropdown({
             {role === "ADMIN" && (
               <motion.div
                 whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
-                className=" hover:bg-gray-200/50 dark:hover:bg-zinc-800"
+                className=" hover:bg-gray-200/50 dark:hover:bg-zinc-300 text-gray-500"
               >
-                <Link href="/admin/add-product" className="w-full p-3">
+                <Link href="/add-product" className="w-full p-3">
                   Add Product
                 </Link>
               </motion.div>

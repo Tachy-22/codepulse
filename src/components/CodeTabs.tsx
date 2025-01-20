@@ -59,27 +59,25 @@ const CodeTabs = ({ tabs }: { tabs: TabData[] }) => {
   console.log({ filteredTabs, tabs });
 
   return (
-    <div className="w-full lg:max-w-3xl lg:w-[48rem]  border-gray-300 dark:border-gray-700 rounded-[0.25rem]  bg-background shadow mx-auto ">
-      <div className="relative ">
-        <div className="relative bg-muted/50  rounded-b-lg h-full">
-          <div className="mx-auto h-full  ">
-            <CodeBlock
-              filename={filteredTabs[activeTab].title}
-              highlightLines={[9, 13, 14, 18]}
-              tabs={filteredTabs}
-              language={getLanguageFromTitle(filteredTabs[activeTab].title)}
-            />
-          </div>
-          <div className="absolute top-[1.25rem] right-[3rem] flex gap-2">
-            <button
-              onClick={() => dispatch(toggleLanguage())}
-              className={`${
-                isTypeScript ? "bg-orange-500" : "bg-blue-500"
-              }  text-white p-1 rounded-[0.25rem] text-xs`}
-            >
-              {isTypeScript ? "TS" : "JS"}
-            </button>
-          </div>
+    <div className="w-full max-w-full lg:max-w-3xl lg:w-[48rem]  border-gray-300 dark:border-gray-700 rounded-[0.25rem]  bg-background shadow mx-auto flex  overflow-x-hidden relative ">
+      <div className="  bg-muted/50  rounded-b-lg h-full w-full ">
+        <div className="mx-auto h-full w-full  ">
+          <CodeBlock
+            filename={filteredTabs[activeTab].title}
+            highlightLines={[9, 13, 14, 18]}
+            tabs={filteredTabs}
+            language={getLanguageFromTitle(filteredTabs[activeTab].title)}
+          />
+        </div>
+        <div className="absolute top-[1.25rem] right-[3rem] flex gap-2">
+          <button
+            onClick={() => dispatch(toggleLanguage())}
+            className={`${
+              isTypeScript ? "bg-orange-500" : "bg-blue-500"
+            }  text-white p-1 rounded-[0.25rem] text-xs`}
+          >
+            {isTypeScript ? "TS" : "JS"}
+          </button>
         </div>
       </div>
     </div>

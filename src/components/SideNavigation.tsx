@@ -42,7 +42,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
   return (
     <nav
       ref={navRef}
-      className={`h-screen w-[20rem] lg:w-64  flex-col lg:flex fixed lg:static left-[-9px] lg:pr-[5rem] lg:px-0 px-2 pr-[4rem] lg:z-10 z-[150] overflow-y-auto  hover-scrollbar text-gray-800 dark:text-white transition-transform duration-300 ease-in-out transform ${
+      className={`h-screen w-[20rem] lg:w-[16rem]  flex-col lg:flex fixed lg:static left-[-9px] lg:pr-[5rem] lg:px-0 px-2 xl:pr-[4rem] lg:z-10 z-[150] overflow-y-auto  hover-scrollbar text-gray-800 dark:text-white transition-transform duration-300 ease-in-out transform ${
         showSideNavOnMobile
           ? "translate-x-0"
           : "-translate-x-[calc(20rem-4.25rem)] lg:translate-x-0"
@@ -58,7 +58,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
           <ChevronRight className="h-4 w-4  " />
         </motion.div>
       </div>
-      <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl h-full  py-4 w-[16rem] ">
+      <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl h-full  py-4 w-[16rem] lg:w-full ">
         <div className="flex flex-col gap-3">
           <div className="px-3 rounded-lg">
             <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
@@ -113,7 +113,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
                 onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="block p-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
+                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
               >
                 {product.title}
               </Link>

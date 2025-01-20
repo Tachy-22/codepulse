@@ -131,7 +131,7 @@ const Product = ({
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
               Code Files{" "}
             </h2>
-            <div className="border rounded-[1.25rem] w-full border-slate-400 dark:border-slate-600 p-4">
+            <div className="border rounded-[1.25rem] w-full border-slate-400 dark:border-slate-600 p-4 flex">
               <CodeTabs tabs={files as TabData[]} />
             </div>
           </div>

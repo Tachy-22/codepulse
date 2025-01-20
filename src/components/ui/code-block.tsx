@@ -74,7 +74,7 @@ const CodeBlock = ({
     : highlightLines;
 
   return (
-    <div className="relative w-full  min-h-full rounded-b-[0.25rem] bg-stone-900 p-4 font-mono text-sm">
+    <div className="relative w-full max-w-full overflow-x-auto min-h-full rounded-b-[0.25rem] bg-stone-900  p-4 font-mono text-sm">
       <div className="flex flex-col gap-2">
         {tabsExist && (
           <div className="flex justify-between items-center">
@@ -113,7 +113,7 @@ const CodeBlock = ({
           </div>
         )}
       </div>
-      <div className=" max-h-[40rem] overflow-y-auto">
+      <div className=" max-h-[40rem] max-w-full overflow-y-auto">
         <SyntaxHighlighter
           language={activeLanguage}
           style={atomDark}

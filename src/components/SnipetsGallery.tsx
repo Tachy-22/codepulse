@@ -196,7 +196,7 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
             ctaText: "Get Code",
             ctaLink: `/products/${project.id}`,
             price: project.price,
-            currentLevel: project.currentLevel || [], // Assuming currentLevel exists in ProductT
+            currentLevel: project.currentLevel || [], // Assuming currentLevel exists in ProductT free
             content: () => (
               <div>
                 <p>{project.description}</p>
@@ -214,7 +214,7 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                 onClick={() => setActive(card)}
                 className="p-4 flex flex-col hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer border  border-slate-300 dark:border-slate-500"
               >
-                <motion.div 
+                <motion.div
                   layoutId={`image-${card.title}-${id}`}
                   className="w-full h-60 rounded-lg"
                   style={{ background: card.src }}
@@ -231,7 +231,11 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                   <span className="text-green-600 text-sm mt-2">
                     {project.price === 0 ? "✓ Free" : "✓ Purchased"}
                   </span>
-                ) : null}
+                ) : (
+                  <span className="text-white bg-blue-600  text-sm mt-2 p-1 px-3 rounded-full  w-fit">
+                    Premium
+                  </span>
+                )}
               </motion.div>
             </div>
           );
