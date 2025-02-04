@@ -42,7 +42,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="fixed  right-0 left-0 lg:top-[9rem] mx-auto z-[200] lg:w-full w-screen lg:max-w-3xl  bg-white dark:bg-zinc-950 lg:rounded-xl shadow-lg py-8 px-6 lg:p-6 border border-zinc-200 dark:border-zinc-800 h-screen lg:h-fit"
+            className="fixed  right-0 left-0 top-[9rem] mx-auto z-[200] md:w-full w-[90%] md:max-w-3xl  bg-white dark:bg-zinc-950 rounded-xl shadow-lg py-8 px-6 md:p-6 border border-zinc-200 dark:border-zinc-800 h-fit"
           >
             <Button
               onClick={onClose}
@@ -50,7 +50,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             >
               <X
                 size={14}
-                className=" hover:text-red-500 hover:border border-red-500 rounded-full"
+                className=" md:hidden absolute -right-[1.5rem] -top-[2rem] hover:text-red-500 border hover:border-red-500 rounded-full " 
               />
             </Button>
             <div className="relative">

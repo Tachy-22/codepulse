@@ -107,13 +107,13 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
               <span>CP Snippets</span>
             </div>
           </div>
-          <div className="ml-4 flex flex-col gap-3 text-sm max-h-full overflow-y-auto hover-scrollbar">
+          <div className="ml-4 flex flex-col gap-3 max-h-full overflow-y-auto hover-scrollbar text-sm">
             {products.map((product) => (
               <Link
                 onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
+                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 "
               >
                 {product.title}
               </Link>

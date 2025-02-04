@@ -48,7 +48,7 @@ export default function UserDropdown({
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative md:flex-1 md:w-full" ref={dropdownRef}>
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -59,11 +59,11 @@ export default function UserDropdown({
           {email}
         </span>
         <Image
-          src="/avatar.svg"
+          src="/user-icon.png"
           alt="Avatar"
-          width={40}
-          height={40}
-          className="rounded-full border flex lg:hidden bg-slate-600"
+          width={1000}
+          height={1000}
+          className="rounded-full border border-gray4300 flex lg:hidden overflow-hidden  w-[40px] h-[40px]"
         />
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -105,10 +105,10 @@ export default function UserDropdown({
             </div>
             {role === "ADMIN" && (
               <motion.div
-                whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
-                className=" hover:bg-gray-200/50 dark:hover:bg-zinc-300 text-gray-500"
+              //  whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                className=" hover:bg-gray-200/50 dark:hover:bg-zinc-600 text-gray-400"
               >
-                <Link href="/add-product" className="w-full p-3">
+                <Link href="/add-product" className="w-full p-3 text-sm">
                   Add Product
                 </Link>
               </motion.div>

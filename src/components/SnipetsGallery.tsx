@@ -15,15 +15,15 @@ const getRandomGradient = (id: string) => {
   }
 
   const gradients = [
-    'linear-gradient(45deg, #FF0000, #00FF00)',
-    'linear-gradient(45deg, #FF00FF, #FFFF00)',
-    'linear-gradient(45deg, #00FFFF, #FF0000)',
-    'linear-gradient(45deg, #FF1493, #00FA9A)',
-    'linear-gradient(45deg, #FF4500, #00CED1)',
-    'linear-gradient(45deg, #9400D3, #FFD700)',
-    'linear-gradient(45deg, #FF69B4, #7FFF00)',
+    "linear-gradient(45deg, #FF0000, #00FF00)",
+    "linear-gradient(45deg, #FF00FF, #FFFF00)",
+    "linear-gradient(45deg, #00FFFF, #FF0000)",
+    "linear-gradient(45deg, #FF1493, #00FA9A)",
+    "linear-gradient(45deg, #FF4500, #00CED1)",
+    "linear-gradient(45deg, #9400D3, #FFD700)",
+    "linear-gradient(45deg, #FF69B4, #7FFF00)",
   ];
-  
+
   const gradient = gradients[Math.floor(Math.random() * gradients.length)];
   gradientMap.set(id, gradient);
   return gradient;
@@ -132,7 +132,7 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
               ref={ref}
               className="w-full max-w-[500px]  h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
             >
-              <motion.div 
+              <motion.div
                 layoutId={`image-${active.title}-${id}`}
                 className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg"
                 style={{ background: active.src }}
@@ -148,14 +148,18 @@ export function ExpandableCardDemo({ projects }: { projects: ProductT[] }) {
                     </motion.h3>
                     <ul className="list-disc pl-5 mt-2 space-y-1">
                       {active.currentLevel.map((level, index) => (
-                        <li key={index} className="text-neutral-600 dark:text-neutral-400 text-sm">
+                        <li
+                          key={index}
+                          className="text-neutral-600 dark:text-neutral-400 text-sm"
+                        >
                           {level}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {user?.purchases?.includes(active.id) || active.price === 0 ? (
+                  {user?.purchases?.includes(active.id) ||
+                  active.price === 0 ? (
                     <Link
                       onClick={() => setActive(null)}
                       href={active.ctaLink}
