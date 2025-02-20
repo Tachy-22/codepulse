@@ -9,7 +9,7 @@ export default function Hero() {
   const userId = user?.id;
 
   return (
-    <div className="md:h-[80vh] h-[50vh] py-[1rem] lg:py-0 w-full max-w-7xl bg-white dark:bg-black flex items-center justify-between   mx-auto gap-12  ">
+    <div className="lg:h-[80vh] h-[50vh] py-[1rem] lg:py-[5rem] w-full max-w-7xl bg-white dark:bg-black flex items-center justify-between   mx-auto gap-12  ">
       <Image
         width={3000}
         height={3000}

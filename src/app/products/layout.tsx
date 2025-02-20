@@ -11,11 +11,13 @@ interface LayoutProps {
 const layout = async ({ children }: LayoutProps) => {
   const userId = cookies().get('userId')?.value;
   
+  const whereClause: [string, "==", string][] = [["privacy", "==", "PUBLIC"]];
+  if (userId) {
+    whereClause.push(["ownerId", "==", userId]);
+  }
+
   const result = await fetchCollection<ProductData>("products", {
-    whereClause: [
-      ["privacy", "==", "PUBLIC"],
-      ["ownerId", "==", userId]
-    ],
+    whereClause,
     exclude: [
       "files",
       "fileTree",
