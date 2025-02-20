@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 
 interface UserDropdownProps {
@@ -63,7 +62,7 @@ export default function UserDropdown({
           alt="Avatar"
           width={1000}
           height={1000}
-          className="rounded-full border border-gray4300 flex lg:hidden overflow-hidden  w-[40px] h-[40px]"
+          className="rounded-full border border-gray4300 flex lg:hidden overflow-hidden w-[40px]  min-w-[40px] h-[40px]"
         />
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -87,6 +86,7 @@ export default function UserDropdown({
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 My Account
               </p>
+              <span className="">{role}</span>
             </div>
             <div className="p-3 flex items-center justify-between">
               <span className="text-sm text-gray-600 dark:text-gray-400 ">
@@ -103,16 +103,7 @@ export default function UserDropdown({
                 </motion.span>
               )}
             </div>
-            {role === "ADMIN" && (
-              <motion.div
-              //  whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
-                className=" hover:bg-gray-200/50 dark:hover:bg-zinc-600 text-gray-400"
-              >
-                <Link href="/add-product" className="w-full p-3 text-sm">
-                  Add Product
-                </Link>
-              </motion.div>
-            )}
+
             <motion.div
               whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
               className="-t -gray-200/50 dark:-gray-700/50"

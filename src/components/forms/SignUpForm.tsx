@@ -8,6 +8,7 @@ import { register, signInWithGoogle } from "@/actions/firebase/auth";
 import Link from "next/link";
 import { createUser } from "@/actions/firebase/users";
 import { PasswordInput } from "../ui/PasswordInput";
+import { FcGoogle } from "react-icons/fc";
 
 export default function SignUpForm() {
   const [error, setError] = useState("");
@@ -68,7 +69,7 @@ export default function SignUpForm() {
       } else {
         setError(result.error || "Something went wrong");
       }
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -95,7 +96,7 @@ export default function SignUpForm() {
           onClick={handleGoogleSignIn}
           className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-[0.5rem] text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
         >
-          <img src="/google.svg" alt="Google" className="w-5 h-5" />
+          <FcGoogle size={24} />
           Continue with Google
         </button>
 

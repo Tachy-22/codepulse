@@ -5,6 +5,8 @@ import { loginSchema } from "@/lib/validations/auth";
 import { useState } from "react";
 import { Mail, Lock, Loader } from "lucide-react";
 import { signIn, signInWithGoogle } from "@/actions/firebase/auth";
+import { FcGoogle } from "react-icons/fc";
+
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -79,7 +81,7 @@ export default function LoginForm() {
           onClick={handleGoogleSignIn}
           className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-[0.5rem] text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
         >
-          <img src="/google.svg" alt="Google" className="w-5 h-5" />
+          <FcGoogle size={24}/>
           Continue with Google
         </button>
 

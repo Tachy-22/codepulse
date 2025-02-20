@@ -6,6 +6,7 @@ import { setProducts } from "@/lib/redux/productSlice";
 import { ProductData } from "@/types";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 interface SideNavigationProps {
   products: ProductData[];
@@ -15,12 +16,16 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
   const dispatch = useDispatch();
   const [showSideNavOnMobile, setShowSideNavOnMobile] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const { user } = useAppSelector((state) => state.userSlice);
+  const userId = user?.id;
+
+  const mySnippets = products.filter((product) => product.ownerId === userId);
+  const cpSnippets = products.filter((product) => product.ownerId !== userId);
 
   useEffect(() => {
     try {
       dispatch(setProducts(products));
-      // Optionally set current product to first one
-      //   dispatch(setCurrentProduct(products.length > 0 ? products[0] : null));
+
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -108,7 +113,26 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
             </div>
           </div>
           <div className="ml-4 flex flex-col gap-3 max-h-full overflow-y-auto hover-scrollbar text-sm">
-            {products.map((product) => (
+            {cpSnippets.map((product) => (
+              <Link
+                onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
+                key={product.id}
+                href={`/products/${product.id}`}
+                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 "
+              >
+                {product.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <div className="px-3 rounded-lg">
+            <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
+              <span>My Snippets</span>
+            </div>
+          </div>
+          <div className="ml-4 flex flex-col gap-3 max-h-full overflow-y-auto hover-scrollbar text-sm">
+            {mySnippets.map((product) => (
               <Link
                 onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
                 key={product.id}

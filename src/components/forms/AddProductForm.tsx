@@ -4,6 +4,8 @@ import { addDocument } from "@/actions/firebase/addDocument";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, PlusCircle, Trash } from "lucide-react";
+import { Button, Input, Textarea, Switch } from "@heroui/react";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 const CATEGORIES = [
   { value: "auth", label: "Authentication & Authorization" },
@@ -12,8 +14,9 @@ const CATEGORIES = [
   { value: "state", label: "State Management" },
 ] as const;
 
-export default function AddProductPage() {
+export default function AddProductPage({ onClose }: { onClose: () => void }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [privacy, setPrivacy] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
   const [installations, setInstallations] = useState([
     { title: "", description: "", code: "" },
   ]);
@@ -25,7 +28,8 @@ export default function AddProductPage() {
   ]);
   const [usefulLinks, setUsefulLinks] = useState([{ title: "", href: "" }]);
   const router = useRouter();
-
+  const { user } = useAppSelector((state) => state.userSlice);
+  const isAdmin = user && user.role === "ADMIN";
   const handleAddFile = () => {
     setFiles((prevFiles) => [...prevFiles, { title: "", code: "" }]);
   };
@@ -103,7 +107,7 @@ export default function AddProductPage() {
       const product = {
         title: formData.get("title"),
         description: formData.get("description"),
-        price: parseInt(formData.get("price") as string) * 100,
+        price: isAdmin ? parseInt(formData.get("price") as string) * 100 : 0,
         installations: installations.filter(
           (install) => install.title && install.code
         ),
@@ -116,6 +120,8 @@ export default function AddProductPage() {
         usefulLinks: usefulLinks.filter((link) => link.title && link.href),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        privacy,
+        ownerId: user && user.id,
       };
       console.log({ product });
       const result = await addDocument(
@@ -126,39 +132,57 @@ export default function AddProductPage() {
       );
       console.log({ result });
       if ("id" in result) {
+        onClose();
         router.push("/products");
       }
     } finally {
       setIsLoading(false);
     }
   };
-  //
-  return (
-    <div className="min-h-screen p-4 bg-white dark:bg-black">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white text-center mb-12 ">
-          Add New Snippet
-        </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+  return (
+    <div className="min-h-screen ">
+      <div className="max-w-7xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-8 pb-[1rem]">
           {/* Main Content Grid */}
           <div className="grid grid-cols-12 gap-6">
             {/* Left Column - Basic Info */}
             <div className="col-span-12 lg:col-span-5 space-y-6">
-              <div className="bg-white dark:bg-black rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  Basic Information
-                </h2>
-                <div className="space-y-4">
+              <div className=" rounded-xl shadow-sm p-6">
+                <div className="flex justify-between items-center">
+                  {" "}
+                  <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+                    Basic Information
+                  </h2>
+                  <div className="flex flex-col items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      {" "}
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-100">
+                        Privacy
+                      </label>
+                      <Switch
+                        checked={privacy === "PRIVATE"}
+                        onValueChange={(checked) =>
+                          setPrivacy(checked ? "PUBLIC" : "PRIVATE")
+                        }
+                        value={privacy}
+                        className="border rounded-full"
+                      />
+                    </div>
+
+                    <span className="text-sm text-gray-500">
+                      {privacy === "PUBLIC" ? "Public" : "Private"}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Product Title
-                    </label>
-                    <input
+                    <Input
+                      label=" Product Title"
                       type="text"
+                      variant="bordered"
                       name="title"
-                      className="block w-full p-3 rounded-lg border border-gray-200 dark:border-gray-700 
-                      bg-white dark:bg-black focus:ring-2 focus:ring-blue-500"
+                      labelPlacement="outside"
                       disabled={isLoading}
                       required
                     />
@@ -168,13 +192,7 @@ export default function AddProductPage() {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Category
                     </label>
-                    <select
-                      name="category"
-                      className="block w-full p-3 rounded-lg border border-gray-200 dark:border-gray-700 
-                      bg-white dark:bg-black focus:ring-2 focus:ring-blue-500"
-                      disabled={isLoading}
-                      required
-                    >
+                    <select name="category" disabled={isLoading} required>
                       <option value="">Select a category</option>
                       {CATEGORIES.map((category) => (
                         <option key={category.value} value={category.value}>
@@ -185,33 +203,26 @@ export default function AddProductPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Description
-                    </label>
-                    <textarea
+                    <Textarea
+                      labelPlacement="outside"
+                      label=" Description"
                       name="description"
                       placeholder="Enter product description"
-                      className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                      bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                      focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                      transition-all duration-200"
+                      variant="bordered"
                       disabled={isLoading}
                       rows={3}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Price (USD)
-                    </label>
-                    <input
+                    <Input
+                      labelPlacement="outside"
+                      label="     Price (USD)"
                       type="number"
                       name="price"
+                      variant="bordered"
                       placeholder="0.00"
-                      className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                      bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                      focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                      transition-all duration-200"
-                      disabled={isLoading}
+                      disabled={isLoading || !isAdmin}
+                      value={!isAdmin ? "0" : undefined}
                       required
                     />
                   </div>
@@ -219,15 +230,14 @@ export default function AddProductPage() {
               </div>
 
               {/* File Tree moved to left column */}
-              <div className="bg-white dark:bg-black rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  File Structure
-                </h2>
-                <textarea
+              <div className=" rounded-xl shadow-sm p-6">
+                <Textarea
+                  label=" File Structure
+"
+                  labelPlacement="outside"
+                  variant="bordered"
                   value={fileTree}
                   onChange={(e) => setFileTree(e.target.value)}
-                  className="w-full h-[200px] font-mono text-sm p-3 rounded-lg border border-gray-200 
-                  dark:border-gray-700 bg-white dark:bg-black"
                   placeholder="Enter file structure"
                   disabled={isLoading}
                 />
@@ -237,32 +247,33 @@ export default function AddProductPage() {
             {/* Right Column - Installation & Files */}
             <div className="col-span-12 lg:col-span-7 space-y-6">
               {/* Installations Section */}
-              <div className="bg-white dark:bg-black rounded-xl shadow-sm p-6">
+              <div className=" rounded-xl shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Installation Steps
                   </h2>
-                  <button
+                  <Button
                     type="button"
-                    onClick={handleAddInstallation}
+                    isIconOnly
+                    onPress={handleAddInstallation}
                     className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400
                     transition-colors duration-200"
                   >
                     <PlusCircle className="h-5 w-5" />
-                    <span>Add Step</span>
-                  </button>
+                  </Button>
                 </div>
                 <div className="grid gap-4">
                   {installations.map((installation, index) => (
                     <div
                       key={index}
-                      className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3 bg-white dark:bg-black transition-all duration-200"
+                      className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3  transition-all duration-200"
                     >
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Installation Title
-                        </label>
-                        <input
+                        <Input
+                          label="                          Installation Title
+"
+                          variant="bordered"
+                          labelPlacement="outside"
                           type="text"
                           placeholder="Enter installation title"
                           value={installation.title}
@@ -273,19 +284,15 @@ export default function AddProductPage() {
                               e.target.value
                             )
                           }
-                          className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                           disabled={isLoading}
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Description
-                        </label>
-                        <textarea
+                        <Textarea
+                          variant="bordered"
+                          label="Description"
+                          labelPlacement="outside"
                           placeholder="Enter installation description"
                           value={installation.description}
                           onChange={(e) =>
@@ -295,19 +302,16 @@ export default function AddProductPage() {
                               e.target.value
                             )
                           }
-                          className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                           disabled={isLoading}
                           rows={2}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Installation Command
-                        </label>
-                        <textarea
+                        <Textarea
+                          label="                          Installation Command
+"
+                          variant="bordered"
+                          labelPlacement="outside"
                           placeholder="Enter installation command"
                           value={installation.code}
                           onChange={(e) =>
@@ -317,10 +321,6 @@ export default function AddProductPage() {
                               e.target.value
                             )
                           }
-                          className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100 font-mono text-sm
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                           disabled={isLoading}
                           rows={2}
                           required
@@ -328,15 +328,15 @@ export default function AddProductPage() {
                       </div>
                       <div className="flex justify-end">
                         {installations.length > 1 && (
-                          <button
+                          <Button
                             type="button"
-                            onClick={() => handleRemoveInstallation(index)}
+                            isIconOnly
+                            onPress={() => handleRemoveInstallation(index)}
                             className="text-red-500 text-sm flex items-center space-x-1"
                             disabled={isLoading}
                           >
                             <Trash className="h-4 w-4" />
-                            <span>Remove Installation</span>
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -345,60 +345,52 @@ export default function AddProductPage() {
               </div>
 
               {/* Files Section */}
-              <div className="bg-white dark:bg-black rounded-xl shadow-sm p-6">
+              <div className=" rounded-xl shadow-sm p-6">
                 <div className="flex justify-between items-center border-b pb-2">
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
                     Add Files (Title & Code)
                   </h2>
-                  <button
+                  <Button
                     type="button"
-                    onClick={handleAddFile}
+                    isIconOnly
+                    onPress={handleAddFile}
                     className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400
                     transition-colors duration-200"
                   >
                     <PlusCircle className="h-5 w-5" />
-                    <span>Add File</span>
-                  </button>
+                  </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
                   {files.map((file, index) => (
                     <div
                       key={index}
-                      className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3 bg-white dark:bg-black transition-all duration-200"
+                      className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3  transition-all duration-200"
                     >
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                           File Title
                         </label>
-                        <input
+                        <Input
+                          variant="bordered"
                           type="text"
                           placeholder="Enter file title"
                           value={file.title}
                           onChange={(e) =>
                             handleFileChange(index, "title", e.target.value)
                           }
-                          className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                           disabled={isLoading}
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Code Snippet
-                        </label>
-                        <textarea
+                        <Textarea
+                          variant="bordered"
+                          label="Code Snippet"
                           placeholder="Enter code snippet"
                           value={file.code}
                           onChange={(e) =>
                             handleFileChange(index, "code", e.target.value)
                           }
-                          className="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100 font-mono text-sm
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                           disabled={isLoading}
                           rows={4}
                           required
@@ -406,15 +398,15 @@ export default function AddProductPage() {
                       </div>
                       <div className="flex justify-end">
                         {files.length > 1 && (
-                          <button
+                          <Button
                             type="button"
-                            onClick={() => handleRemoveFile(index)}
+                            isIconOnly
+                            onPress={() => handleRemoveFile(index)}
                             className="text-red-500 text-sm flex items-center space-x-1"
                             disabled={isLoading}
                           >
                             <Trash className="h-4 w-4" />
-                            <span>Remove File</span>
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -424,27 +416,29 @@ export default function AddProductPage() {
             </div>
 
             {/* Useful Links */}
-            <div className="bg-white col-span-12 dark:bg-black rounded-xl shadow-sm p-6 md:-8 w-full">
-              <div className="space-y-4 p-6 bg-white dark:bg-black/50 rounded-lg transition-all duration-200 w-full">
+            <div className=" col-span-12 rounded-xl shadow-sm p-6 md:-8 w-full">
+              <div className="space-y-4 p-6 /50 rounded-lg transition-all duration-200 w-full">
                 <div className="flex justify-between items-center border-b pb-2">
                   <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Useful Links
                   </h3>
-                  <button
+                  <Button
                     type="button"
-                    onClick={() =>
+                    isIconOnly
+                    onPress={() =>
                       handleAddItem(setUsefulLinks, { title: "", href: "" })
                     }
                     className="text-blue-500 text-sm flex items-center space-x-1"
                   >
                     <PlusCircle className="h-4 w-4" />
-                    <span>Add Link</span>
-                  </button>
+                  </Button>
                 </div>
                 {usefulLinks.map((item, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex gap-2">
-                      <input
+                      <Input
+                        variant="bordered"
+                        labelPlacement="outside"
                         type="text"
                         value={item.title}
                         onChange={(e) =>
@@ -455,13 +449,10 @@ export default function AddProductPage() {
                             e.target.value
                           )
                         }
-                        className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                         placeholder="Link Title"
                       />
-                      <input
+                      <Input
+                        variant="bordered"
                         type="url"
                         value={item.href}
                         onChange={(e) =>
@@ -472,22 +463,19 @@ export default function AddProductPage() {
                             e.target.value
                           )
                         }
-                        className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                          bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                          focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                          transition-all duration-200"
                         placeholder="URL"
                       />
                       {usefulLinks.length > 1 && (
-                        <button
+                        <Button
                           type="button"
-                          onClick={() =>
+                          isIconOnly
+                          onPress={() =>
                             handleRemoveItem(setUsefulLinks, index)
                           }
                           className="text-red-500"
                         >
                           <Trash className="h-4 w-4" />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -498,26 +486,27 @@ export default function AddProductPage() {
             {/* Bottom Section - Additional Info */}
             <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Current Level */}
-              <div className="bg-white dark:bg-black rounded-xl shadow-sm p-6">
-                <div className="space-y-4 p-6 bg-white dark:bg-black/50 rounded-lg transition-all duration-200">
+              <div className=" rounded-xl shadow-sm p-6">
+                <div className="space-y-4 p-6 /50 rounded-lg transition-all duration-200">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Current Level of Code
                     </h3>
-                    <button
+                    <Button
                       type="button"
-                      onClick={() =>
+                      isIconOnly
+                      onPress={() =>
                         handleAddItem(setCurrentLevel, { text: "" })
                       }
                       className="text-blue-500 text-sm flex items-center space-x-1"
                     >
                       <PlusCircle className="h-4 w-4" />
-                      <span>Add Item</span>
-                    </button>
+                    </Button>
                   </div>
                   {currentLevel.map((item, index) => (
                     <div key={index} className="flex gap-2">
-                      <input
+                      <Input
+                        variant="bordered"
                         type="text"
                         value={item.text}
                         onChange={(e) =>
@@ -528,22 +517,19 @@ export default function AddProductPage() {
                             e.target.value
                           )
                         }
-                        className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                        bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                        transition-all duration-200"
                         placeholder="Enter capability"
                       />
                       {currentLevel.length > 1 && (
-                        <button
+                        <Button
                           type="button"
-                          onClick={() =>
+                          isIconOnly
+                          onPress={() =>
                             handleRemoveItem(setCurrentLevel, index)
                           }
                           className="text-red-500"
                         >
                           <Trash className="h-4 w-4" />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   ))}
@@ -551,26 +537,27 @@ export default function AddProductPage() {
               </div>
 
               {/* Optimization Suggestions */}
-              <div className="bg-white dark:bg-black rounded-xl shadow-sm p-6 md:-4">
-                <div className="space-y-4 p-6 bg-white dark:bg-black/50 rounded-lg transition-all duration-200">
+              <div className=" rounded-xl shadow-sm p-6 md:-4">
+                <div className="space-y-4 p-6 /50 rounded-lg transition-all duration-200">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Optimization Suggestions
                     </h3>
-                    <button
+                    <Button
                       type="button"
-                      onClick={() =>
+                      isIconOnly
+                      onPress={() =>
                         handleAddItem(setOptimizationSuggestions, { text: "" })
                       }
                       className="text-blue-500 text-sm flex items-center space-x-1"
                     >
                       <PlusCircle className="h-4 w-4" />
-                      <span>Add Suggestion</span>
-                    </button>
+                    </Button>
                   </div>
                   {optimizationSuggestions.map((item, index) => (
                     <div key={index} className="flex gap-2">
-                      <input
+                      <Input
+                        variant="bordered"
                         type="text"
                         value={item.text}
                         onChange={(e) =>
@@ -581,22 +568,19 @@ export default function AddProductPage() {
                             e.target.value
                           )
                         }
-                        className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg 
-                        bg-white dark:bg-black text-gray-900 dark:text-gray-100
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                        transition-all duration-200"
                         placeholder="Enter suggestion"
                       />
                       {optimizationSuggestions.length > 1 && (
-                        <button
+                        <Button
                           type="button"
-                          onClick={() =>
+                          isIconOnly
+                          onPress={() =>
                             handleRemoveItem(setOptimizationSuggestions, index)
                           }
                           className="text-red-500"
                         >
                           <Trash className="h-4 w-4" />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   ))}
@@ -605,7 +589,7 @@ export default function AddProductPage() {
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
             className="w-full max-w-md mx-auto flex items-center justify-center space-x-2 
@@ -622,7 +606,7 @@ export default function AddProductPage() {
                 <span className="font-medium">Add Snippet</span>
               </>
             )}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

@@ -2,13 +2,20 @@ import React from "react";
 import SideNavigation from "@/components/SideNavigation";
 import { fetchCollection } from "@/actions/firebase/fetchCollection";
 import { ProductData } from "@/types";
+import { cookies } from 'next/headers';
 
 interface LayoutProps {
   children: React.ReactElement;
 }
 
 const layout = async ({ children }: LayoutProps) => {
+  const userId = cookies().get('userId')?.value;
+  
   const result = await fetchCollection<ProductData>("products", {
+    whereClause: [
+      ["privacy", "==", "PUBLIC"],
+      ["ownerId", "==", userId]
+    ],
     exclude: [
       "files",
       "fileTree",

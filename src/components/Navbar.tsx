@@ -12,6 +12,7 @@ import { FaCode } from "react-icons/fa";
 import SearchModal from "./SearchModal";
 
 import UserDropdown from "./UserDropdown";
+import AddSnippetModal from "./modals/AddSnippetModal";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,6 +50,8 @@ export default function Navbar() {
       >
         Snippets{" "}
       </Link>
+    
+      {userId && <AddSnippetModal />}
     </>
   );
 
@@ -115,10 +118,7 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      <nav
         className={`border-b sticky w-full top-0 backdrop-blur-lg bg-white/80 dark:bg-black/80 z-[1000] ${
           scrolled
             ? " border-zinc-200/50 dark:border-zinc-700/50 shadow-sm"
@@ -129,7 +129,7 @@ export default function Navbar() {
           <div className="flex justify-between h-16 items-center gap-6">
             <Link
               href="/"
-              className="text-xl  flex gap-3 font-bold items-center text-black dark:text-white"
+              className="text-xl  flex gap-3 font-bold items-center text-blue-500 dark:text-white"
             >
               <FaCode /> <span className="">CodePulse</span>
             </Link>
@@ -139,7 +139,7 @@ export default function Navbar() {
               <NavLinks />
             </div>
 
-            <div className="flex  items-center justify-end lg:justify-start md: w-full  gap-4 ">
+            <div className="flex  items-center justify-end lg:justify-start md: w-full  md:gap-4  gap-1">
               <SearchBar />
               <AuthButtons />
               <div className="md:flex hidden">
@@ -161,7 +161,7 @@ export default function Navbar() {
           </div>
         </div>
         <MobileMenu />
-      </motion.nav>
+      </nav>
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}

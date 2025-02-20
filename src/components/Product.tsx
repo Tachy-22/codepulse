@@ -1,7 +1,7 @@
 "use client";
 import CodeTabs from "@/components/CodeTabs";
-import React from "react";
-import { Link2 } from "lucide-react";
+import React, { useState } from "react";
+import { Link2, Clipboard, Check } from "lucide-react";
 import FileTree from "@/components/FileTree";
 import CodeBlock from "@/components/ui/code-block";
 import { ProductData } from "@/types";
@@ -63,11 +63,38 @@ const Product = ({
     currentLevel,
     optimizationSuggestions,
   } = product;
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 3000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   if (!product) return <LoadingSkeleton />;
 
   return (
     <div className="p-4 ">
       <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full">
+        {/* Copy Link Section */}
+        <div className="flex items-center gap-2 absolute right-0 ">
+          <span className="text-sm text-gray-600 dark:text-gray-400 md:flex hidden">Copy snippet link</span>
+          <button
+            onClick={handleCopy}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+          >
+            {isCopied ? (
+              <Check className="h-4 w-4 text-green-500 transition-all" />
+            ) : (
+              <Clipboard className="h-4 w-4 text-gray-500 dark:text-gray-400 transition-all" />
+            )}
+          </button>
+        </div>
+
         {/* Basic Info */}
         <div className="space-y-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">

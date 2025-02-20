@@ -3,21 +3,20 @@ import React from "react";
 
 export function Features() {
   return (
-    <section className="grid md:grid-cols-2 gap-8 p-6 mx-auto max-w-7xl">
+    <section className="grid md:grid-cols-2 gap-8 p-6 pb-20 mx-auto max-w-7xl">
       <div className="space-y-6">
         <h2 className="text-4xl font-bold text-gray-900 dark:text-white leading-tight">
-          Enhance Your Coding Workflow with CodePulse
+          Transform Your Coding Experience with CodePulse
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-          Unlock the power of reusable code snippets to optimize your
-          development process. Join us in reshaping the coding landscape.
+          Unlock a world where coding is collaborative, innovative, and efficient.
         </p>
         <ul className="space-y-4">
           {[
-            "Access a comprehensive library of code snippets in seconds",
-            "Customize snippets to align perfectly with your projects",
-            "Share and collaborate on snippets with fellow developers",
-            "Enjoy top-notch security and uptime for your coding needs",
+            "Personalized Snippet Management - Control the visibility of your code snippets, choosing to share them publicly or keep them private.",
+            "Community Engagement - Collaborate with like-minded developers, exchange ideas, and expand your coding knowledge through shared resources.",
+            "Instant Sharing - Easily distribute your snippets via links to streamline collaboration with your peers.",
+            "Join CodePulse today to enhance your development process and connect with a thriving coding community.",
           ].map((item, index) => (
             <li key={index} className="flex items-start space-x-2">
               <span className="text-blue-500">•</span>
@@ -25,7 +24,6 @@ export function Features() {
             </li>
           ))}
         </ul>
-    
       </div>
       <div className="flex items-center justify-center">
         <img

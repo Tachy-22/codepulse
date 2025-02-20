@@ -10,6 +10,7 @@ import UserDataProvider from "@/providers/UserDataProvider";
 import { User } from "@/types";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Footer from "@/components/Footer";
+import HeroUiProvider from "@/providers/HeroUiProvider";
 
 interface UserData extends User {
   [key: string]: unknown;
@@ -29,7 +30,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "CodePulse",
-  description: "Created by Jeff",
+  description: "Your code snippet hub. Created by Jeff",
 };
 
 export default async function RootLayout({
@@ -65,11 +66,11 @@ export default async function RootLayout({
               disableTransitionOnChange
             >
               {" "}
-              <Navbar />
-              <div className="h-full   ">
-                {children}
-              </div>
-              <Footer />
+              <HeroUiProvider>
+                <Navbar />
+                <div className="h-full   ">{children}</div>
+                <Footer />
+              </HeroUiProvider>
             </ThemeProvider>
           </UserDataProvider>
         </StoreProvider>

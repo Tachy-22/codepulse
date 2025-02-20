@@ -9,15 +9,17 @@ import {
   limit,
   QueryConstraint,
   Timestamp,
+  or as FirebaseOr,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+export type WhereClause =
+  | [string, "<" | "<=" | "==" | "!=" | ">=" | ">", string | number | boolean]
+  | ["privacy", "==", "PUBLIC"]
+  | ["ownerId", "==", string | undefined];
+
 export type QueryOptions = {
-  whereClause?: [
-    string,
-    "<" | "<=" | "==" | ">=" | ">",
-    string | number | boolean
-  ][];
+  whereClause?: WhereClause[];
   orderByField?: string;
   orderDirection?: "asc" | "desc";
   limitTo?: number;
@@ -40,9 +42,10 @@ export async function fetchCollection<T>(
 
     const constraints: QueryConstraint[] = [];
     if (options?.whereClause) {
-      options.whereClause.forEach(([field, operator, value]) => {
-        constraints.push(where(field, operator, value));
-      });
+      const clauses = options.whereClause.map(([field, operator, value]) =>
+        where(field, operator, value)
+      );
+      constraints.push(FirebaseOr(...clauses) as unknown as QueryConstraint);
     }
 
     if (options?.orderByField) {
