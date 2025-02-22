@@ -15,7 +15,7 @@ export default function Hero() {
         height={3000}
         alt="img1"
         src={"/wave.svg"}
-        className="h-full w-full absolute hidden md:flex md:-bottom-[10rem] lg:-bottom-[6rem] right-0 "
+        className="h-full w-full absolute hidden md:flex  lg:-bottom-[6rem] md:-bottom-[1rem] right-0 "
         priority
       />
       <div className="flex flex-col md:w-[40%] relative px-4">
@@ -64,13 +64,13 @@ export default function Hero() {
           className="absolute lg:bottom-[0rem] lg:right-[0rem] bottom-0 right-0 z-10 w-[160px] h-[156px] lg:scale-100 scale-[80%] "
         />
       </div>
-      <div className=" hidden md:flex rounded-l-full rounded-b-full overflow-hidden translate-x-[6rem] -translate-y-[16rem]">
+      <div className=" hidden md:flex rounded-l-full rounded-b-full overflow-hidden translate-x-[6rem] lg:-translate-y-[16rem] -translate-y-[10rem]">
         <Image
           width={3000}
           height={3000}
           alt="img1"
           src={"/hero-img.avif"}
-          className="h-full w-full aspect-square "
+          className="h-full w-full aspect-square object-top"
           priority
         />
       </div>

@@ -178,10 +178,11 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                 <div className="flex flex-col gap-4">
                   <div>
                     <Input
-                      label=" Product Title"
+                      label=" Snippet Title"
                       type="text"
                       variant="bordered"
                       name="title"
+                      placeholder="Enter snippet title"
                       labelPlacement="outside"
                       disabled={isLoading}
                       required
@@ -192,14 +193,38 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Category
                     </label>
-                    <select name="category" disabled={isLoading} required>
-                      <option value="">Select a category</option>
-                      {CATEGORIES.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
+                    <div className="relative w-full">
+                      <select
+                        name="category"
+                        disabled={isLoading}
+                        required
+                        className="w-full px-4 py-2.5 text-sm rounded-lg bg-white dark:bg-gray-900
+      border border-gray-300 dark:border-gray-700
+      text-gray-900 dark:text-gray-100
+      focus:border-blue-500 dark:focus:border-blue-400
+      focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
+      disabled:opacity-50 disabled:cursor-not-allowed
+      transition-all duration-200 ease-in-out
+      hover:border-gray-400 dark:hover:border-gray-600
+      appearance-none cursor-pointer"
+                      >
+                        <option
+                          value=""
+                          className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2"
+                        >
+                          Select a category
                         </option>
-                      ))}
-                    </select>
+                        {CATEGORIES.map((category) => (
+                          <option
+                            key={category.value}
+                            value={category.value}
+                            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          >
+                            {category.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <div>
@@ -207,7 +232,7 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                       labelPlacement="outside"
                       label=" Description"
                       name="description"
-                      placeholder="Enter product description"
+                      placeholder="Enter snippet description"
                       variant="bordered"
                       disabled={isLoading}
                       rows={3}
