@@ -28,23 +28,54 @@ const geistMono = localFont({
 });
 const inter = Inter({ subsets: ["latin"] });
 
+// Determine the base URL for metadata
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://codepulse-kohl.vercel.app' // Your actual production domain
+    : 'http://localhost:3000');
+
 export const metadata: Metadata = {
-  title: "CodePulse",
-  description: "Your code snippet hub. Created by Jeff",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || 
-    (process.env.NODE_ENV === 'production' 
-      ? 'https://your-production-domain.com' // Replace with your production URL
-      : 'http://localhost:3000')
-  ),
+  title: {
+    default: "CodePulse | Code Snippet Sharing Platform",
+    template: "%s | CodePulse"
+  },
+  description: "Discover, share and collaborate on code snippets with developers worldwide",
+  metadataBase: new URL(baseUrl),
   openGraph: {
     type: 'website',
     siteName: 'CodePulse',
     locale: 'en_US',
+    url: baseUrl,
+    title: "CodePulse | Code Snippet Sharing Platform",
+    description: "Discover, share and collaborate on code snippets with developers worldwide",
+    images: [
+      {
+        url: `${baseUrl}/api/og?title=CodePulse`,
+        width: 1200,
+        height: 630,
+        alt: "CodePulse Platform"
+      }
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    creator: '@your_twitter_handle', // Replace with your Twitter handle
+    creator: '@entekume_j',
+    title: "CodePulse | Code Snippet Sharing Platform",
+    description: "Discover, share and collaborate on code snippets with developers worldwide",
+    images: [`${baseUrl}/api/og?title=CodePulse`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    }
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
 };
 
@@ -70,7 +101,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased dark:bg-black bg-white`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased dark:bg-black bg-white `}
       >
         <StoreProvider>
           <UserDataProvider user={userData}>

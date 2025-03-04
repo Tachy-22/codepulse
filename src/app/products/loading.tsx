@@ -1,17 +1,19 @@
-import React from 'react'
+import React from "react";
+import { Skeleton } from "@heroui/skeleton";
 
-const loading = () => {
+export default function ProductsLoading() {
   return (
-    <div className="w-full mx-auto px-4 pt-[1rem] grid grid-cols-1 lg:grid-cols-2 gap-6 h-screen">
-      {[...Array(6)].map((_, i) => (
-        <div key={i} className="border rounded-xl p-6 space-y-3 h-[25rem]">
-          <div className="h-[15rem] bg-gray-200 rounded-md animate-pulse"></div>
-          <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
-          <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2"></div>
-        </div>
-      ))}
+    <div className="container mx-auto py-8 px-4">
+      <Skeleton className="h-10 w-56 mx-auto mb-8" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="border border-gray-300 rounded-xl p-4 space-y-3">
+            <Skeleton className="h-[15rem] w-full rounded-md" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
-
-export default loading
