@@ -3,11 +3,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validations/auth";
 import { useState } from "react";
-import { Mail, Lock, Loader } from "lucide-react";
-import { signIn, signInWithGoogle } from "@/actions/firebase/auth";
+import { Mail, Loader } from "lucide-react";
+import { signIn } from "@/actions/firebase/auth";
 import { FcGoogle } from "react-icons/fc";
+import { fetchDocument } from "@/actions/firebase/fetchDocument";
+import { createUser, getUserByEmail } from "@/actions/firebase/users";
 
 import Link from "next/link";
+import { Input } from "@heroui/react";
+import { signInWithGoogle } from "@/lib/auth";
+import { PasswordInput } from "../ui/PasswordInput";
+import { getErrorMessage } from "@/lib/utils";
+
+
 
 export default function LoginForm() {
   const [error, setError] = useState("");
@@ -35,29 +43,59 @@ export default function LoginForm() {
     try {
       const result = await signIn(data.email, data.password, data.rememberMe);
       if (result.success) {
+        // Check if user exists in the collection
+        const userDoc = await fetchDocument("users", result?.userId as string);
+        
+        // If user doesn't exist by ID, check by email
+        if (!userDoc) {
+          // Check if this email exists but with different provider
+          const existingEmailUser = await getUserByEmail(data.email);
+          
+          if (existingEmailUser) {
+            // User exists with different auth method - create a new user record
+            await createUser({
+              id: result.userId as string,
+              email: data.email,
+              name: data.email.split("@")[0], // Basic name from email
+              provider: "EMAIL",
+            });
+          } else {
+            // No user with this email exists, create new user
+            await createUser({
+              id: result.userId as string,
+              email: data.email,
+              name: data.email.split("@")[0], // Basic name from email
+              provider: "EMAIL",
+            });
+          }
+        }
+        
         window.location.href = "/products";
       } else {
-        setError(result.error || "Invalid credentials");
+        setError(getErrorMessage(result.error as string));
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const result = await signInWithGoogle();
-      if (result.success) {
-        window.location.href = "/products";
-      } else {
-        setError(result.error || "Something went wrong");
-      }
-    }finally {
-      setIsLoading(false);
-    }
-  };
+   const handleGoogleSignIn = async () => {
+     setError("");
+     try {
+       const result = await signInWithGoogle();
+       if (result.success) {
+         // Immediately redirect to products page instead of login
+         window.location.href = "/products";
+       } else {
+         setError(result.error || "Something went wrong");
+       }
+     } finally {
+       setIsLoading(false);
+     }
+   };
 
   return (
     <div className="h-[calc(100vh-7rem)] flex items-center justify-center bg-gray-50 dark:bg-black px-4">
@@ -81,7 +119,7 @@ export default function LoginForm() {
           onClick={handleGoogleSignIn}
           className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-[0.5rem] text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
         >
-          <FcGoogle size={24}/>
+          <FcGoogle size={24} />
           Continue with Google
         </button>
 
@@ -97,46 +135,24 @@ export default function LoginForm() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register("email")}
-                  type="email"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-800 rounded-[0.5rem] text-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-black focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                  placeholder="Email address"
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{`${errors.email.message}`}</p>
-              )}
-            </div>
+          <div className="flex flex-col gap-5">
+            <Input
+              startContent={<Mail className="h-5 w-5 text-gray-400" />}
+              label="Email address"
+              variant="bordered"
+              {...register("email")}
+              type="email"
+              placeholder="Email address"
+              errorMessage={errors.email?.message as string}
+            />
 
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  {...register("password")}
-                  type="password"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-800 rounded-[0.5rem] text-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-black focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                  placeholder="Password"
-                />
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{`${errors.password.message}`}</p>
-              )}
-            </div>
+            {/* Replace the Input component with PasswordInput */}
+            <PasswordInput
+              registration={register("password")}
+              error={errors.password?.message}
+              label="Password"
+              placeholder="Enter your password"
+            />
           </div>
 
           <div className="flex items-center justify-between">

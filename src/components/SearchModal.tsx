@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { ProductData } from "@/types";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button } from "@heroui/react";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -45,12 +45,14 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             className="fixed  right-0 left-0 top-[9rem] mx-auto z-[200] md:w-full w-[90%] md:max-w-3xl  bg-white dark:bg-zinc-950 rounded-xl shadow-lg py-8 px-6 md:p-6 border border-zinc-200 dark:border-zinc-800 h-fit"
           >
             <Button
-              onClick={onClose}
+              onPress={onClose}
               className="absolute right-0 top-0 w-fit flex items-end"
+              isIconOnly
+              variant="light"
             >
               <X
                 size={14}
-                className=" md:hidden absolute -right-[1.5rem] -top-[2rem] hover:text-red-500 border hover:border-red-500 rounded-full " 
+                className="  absolute -right-[1.5rem] -top-[2rem] text-black  hover:text-red-500 border hover:border-red-500 rounded-full "
               />
             </Button>
             <div className="relative">

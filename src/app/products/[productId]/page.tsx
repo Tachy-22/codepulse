@@ -6,6 +6,7 @@ import React from "react";
 
 const page = async ({ params }: { params: { productId: string } }) => {
   const productId = params.productId;
+  const decodedDocumentId = decodeURIComponent(productId);
 
   if (productId === "nextjs-installation") {
     return <InstallationGuide type="nextjs" />;
@@ -17,11 +18,11 @@ const page = async ({ params }: { params: { productId: string } }) => {
 
   const product = await fetchDocument<ProductData>(
     "products",
-    params.productId
+    decodedDocumentId
   );
 
   if (!product || "code" in product) return null;
-  return <Product product={product.data} />;
+  return <Product product={{ ...product.data, id: decodedDocumentId }} />;
 };
 
 export default page;

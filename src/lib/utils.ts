@@ -68,6 +68,36 @@ const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
+const getErrorMessage = (error: string) => {
+  switch (error) {
+    case "Firebase: Error (auth/email-already-in-use).":
+      return "This email is already in use. Please try logging in instead.";
+    case "auth/email-already-in-use":
+      return "This email is already in use. Please try logging in instead.";
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/operation-not-allowed":
+      return "Sign-up is currently disabled. Please try again later.";
+    case "auth/weak-password":
+      return "Password is too weak. Please choose a stronger password.";
+    case "auth/network-request-failed":
+      return "Network error. Please check your connection and try again.";
+    case "auth/too-many-requests":
+      return "Too many failed attempts. Please try again later.";
+    case "auth/user-disabled":
+      return "This account has been disabled. Please contact support.";
+    default:
+      return "Something went wrong. Please try again.";
+  }
+};
+
+// Helper function to get the CSS class based on validation state
+const getClassForCriteria = (isValid: boolean) => {
+  return isValid
+    ? "text-green-500 dark:text-green-400 flex items-center"
+    : "text-gray-500 dark:text-gray-400 flex items-center";
+};
+
 export {
   cn,
   getAuthToken,
@@ -76,47 +106,6 @@ export {
   getUserId,
   setUserId,
   removeUserId,
+  getClassForCriteria,
+  getErrorMessage,
 };
-
-export const snippetTitles = [
-  "nextjs-firebase-auth",
-  "nextjs-stripe-checkout",
-  "nextjs-zustand-store",
-  "nextjs-react-query",
-  "firebase-crud-operations",
-  "nextjs-protected-routes",
-  "nextjs-middleware-auth",
-  "firebase-storage-upload",
-  "nextjs-form-validation",
-  "stripe-subscription-setup",
-  "nextjs-api-routes",
-  "firebase-real-time-db",
-  "nextjs-seo-setup",
-  "auth-context-provider",
-  "stripe-webhook-handler",
-  "nextjs-image-optimization",
-  "firebase-social-auth",
-  "nextjs-error-boundary",
-  "custom-auth-hooks",
-  "stripe-payment-intent",
-  "nextjs-typescript-setup",
-  "firebase-cloud-functions",
-  "nextjs-dynamic-imports",
-  "state-management-context",
-  "stripe-customer-portal",
-  "nextjs-server-actions",
-  "firebase-analytics-setup",
-  "nextjs-route-handlers",
-  "authentication-flow",
-  "stripe-elements-ui",
-  "nextjs-data-fetching",
-  "firebase-security-rules",
-  "nextjs-loading-states",
-  "redux-toolkit-setup",
-  "stripe-product-catalog",
-  "nextjs-error-handling",
-  "firebase-messaging",
-  "nextjs-infinite-scroll",
-  "auth-middleware",
-  "payment-processing",
-];

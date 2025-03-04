@@ -1,10 +1,19 @@
 "use client";
 import CodeTabs from "@/components/CodeTabs";
 import React, { useState } from "react";
-import { Link2, Clipboard, Check } from "lucide-react";
+import { Link2, Clipboard, Check, MoreVertical, Twitter } from "lucide-react";
 import FileTree from "@/components/FileTree";
 import CodeBlock from "@/components/ui/code-block";
 import { ProductData } from "@/types";
+import AddSnippetModal from "./modals/AddSnippetModal";
+import { useAppSelector } from "@/lib/redux/hooks";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+} from "@heroui/react";
 
 const LoadingSkeleton = () => {
   return (
@@ -48,11 +57,7 @@ const LoadingSkeleton = () => {
   );
 };
 
-const Product = ({
-  product,
-}: {
-  product: ProductData;
-}) => {
+const Product = ({ product }: { product: ProductData }) => {
   const {
     description,
     fileTree,
@@ -62,7 +67,10 @@ const Product = ({
     files,
     currentLevel,
     optimizationSuggestions,
+    ownerId,
   } = product;
+  const { user } = useAppSelector((state) => state.userSlice);
+
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -71,28 +79,77 @@ const Product = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 3000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
+  };
+  
+  const handleShareToX = () => {
+    const text = `🚀 Just dropped a sleek code snippet! Check it out here: ${window.location.href} 💻✨\n\nIt's clean, efficient, and ready to roll. Let me know what you think! 👀🔥 #Coding #DevLife #codepulse`;
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    
+    // Center popup window
+    const width = 550;
+    const height = 420;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    
+    // Open popup window with centered position
+    window.open(
+      shareUrl,
+      'Share to X',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no`
+    );
   };
 
   if (!product) return <LoadingSkeleton />;
 
   return (
-    <div className="p-4 ">
+    <div className="p-4">
       <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full">
-        {/* Copy Link Section */}
-        <div className="flex items-center gap-2 absolute right-0 ">
-          <span className="text-sm text-gray-600 dark:text-gray-400 md:flex hidden">Copy snippet link</span>
-          <button
-            onClick={handleCopy}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-          >
-            {isCopied ? (
-              <Check className="h-4 w-4 text-green-500 transition-all" />
-            ) : (
-              <Clipboard className="h-4 w-4 text-gray-500 dark:text-gray-400 transition-all" />
-            )}
-          </button>
+        {/* Replace with NextUI Dropdown */}
+        <div className="flex items-center gap-2 absolute right-5 border rounded-full">
+          <Dropdown>
+            <DropdownTrigger>
+              <Button 
+                isIconOnly
+                variant="light"
+                className="p-0 bg-transparent" 
+                radius="full"
+              >
+                <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Product actions">
+              <DropdownItem
+                key="copy"
+                startContent={isCopied ? 
+                  <Check className="h-4 w-4" /> : 
+                  <Clipboard className="h-4 w-4" />
+                }
+                onClick={handleCopy}
+              >
+                Copy Link
+              </DropdownItem>
+              
+              <DropdownItem
+                key="share-x"
+                startContent={<Twitter className="h-4 w-4" />}
+                onClick={handleShareToX}
+              >
+                Share to X
+              </DropdownItem>
+              
+              {user && (ownerId === user.id || user.role === "ADMIN") ? (
+                <DropdownItem
+                  key="add-snippet"
+                  className="p-0"
+                >
+                  <AddSnippetModal showAsMenuItem product={product} />
+                </DropdownItem>
+              ) : null}
+
+            </DropdownMenu>
+          </Dropdown>
         </div>
 
         {/* Basic Info */}
@@ -172,7 +229,10 @@ const Product = ({
             </h2>
             <div className="relative">
               {currentLevel.map((item, index) => (
-                <div key={index} className="relative pl-8 pb-8 last:pb-0 lg:ml-10">
+                <div
+                  key={index}
+                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10"
+                >
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-blue-500 to-blue-300 dark:from-blue-400 dark:to-blue-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/20" />
                   <div className="ml-4 rounded-xl px-4  transition-all duration-300 ">
@@ -194,7 +254,10 @@ const Product = ({
             </h2>
             <div className="relative">
               {optimizationSuggestions.map((item, index) => (
-                <div key={index} className="relative pl-8 pb-8 last:pb-0 lg:ml-10">
+                <div
+                  key={index}
+                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10"
+                >
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-amber-500 to-amber-300 dark:from-amber-400 dark:to-amber-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg shadow-amber-500/20" />
                   <div className="ml-2 rounded-xl px-4  ansition-all duration-300 ">

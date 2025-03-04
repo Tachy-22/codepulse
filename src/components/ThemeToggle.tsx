@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@heroui/react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "./ui/button";
 
 export default function ThemeToggle() {
   const { setTheme, theme } = useTheme();
@@ -10,8 +10,8 @@ export default function ThemeToggle() {
   return (
     <Button
       variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+isIconOnly
+      onPress={() => setTheme(theme === "light" ? "dark" : "light")}
       className="relative hover:bg-transparent  hover:border-gray-600 dark:hover:border-gray-50 transition duration-500"
     >
       <Sun

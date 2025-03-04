@@ -1,11 +1,12 @@
 "use client";
-
 import { addDocument } from "@/actions/firebase/addDocument";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, PlusCircle, Trash } from "lucide-react";
 import { Button, Input, Textarea, Switch } from "@heroui/react";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { updateDocument } from "@/actions/firebase/updateDocument";
+import { ProductData } from "@/types";
 
 const CATEGORIES = [
   { value: "auth", label: "Authentication & Authorization" },
@@ -14,19 +15,37 @@ const CATEGORIES = [
   { value: "state", label: "State Management" },
 ] as const;
 
-export default function AddProductPage({ onClose }: { onClose: () => void }) {
+interface AddProductPageProps {
+  onClose: () => void;
+  initialData?: ProductData;
+}
+
+export default function AddProductPage({
+  onClose,
+  initialData,
+}: AddProductPageProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [privacy, setPrivacy] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
-  const [installations, setInstallations] = useState([
-    { title: "", description: "", code: "" },
-  ]);
-  const [files, setFiles] = useState([{ title: "", code: "" }]);
-  const [fileTree, setFileTree] = useState("");
-  const [currentLevel, setCurrentLevel] = useState([{ text: "" }]);
-  const [optimizationSuggestions, setOptimizationSuggestions] = useState([
-    { text: "" },
-  ]);
-  const [usefulLinks, setUsefulLinks] = useState([{ title: "", href: "" }]);
+  const [privacy, setPrivacy] = useState<"PUBLIC" | "PRIVATE">(
+    (initialData?.privacy as "PUBLIC" | "PRIVATE") || "PUBLIC"
+  );
+  const [installations, setInstallations] = useState(
+    initialData?.installations || [{ title: "", description: "", code: "" }]
+  );
+  const [files, setFiles] = useState(
+    initialData?.files || [{ title: "", code: "" }]
+  );
+  const [fileTree, setFileTree] = useState(initialData?.fileTree || "");
+  const [currentLevel, setCurrentLevel] = useState(
+    initialData?.currentLevel?.map((text) => ({ text })) || [{ text: "" }]
+  );
+  const [optimizationSuggestions, setOptimizationSuggestions] = useState(
+    initialData?.optimizationSuggestions?.map((text) => ({ text })) || [
+      { text: "" },
+    ]
+  );
+  const [usefulLinks, setUsefulLinks] = useState(
+    initialData?.usefulLinks || [{ title: "", href: "" }]
+  );
   const router = useRouter();
   const { user } = useAppSelector((state) => state.userSlice);
   const isAdmin = user && user.role === "ADMIN";
@@ -98,8 +117,6 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ product: "adding" });
-
     setIsLoading(true);
 
     try {
@@ -118,22 +135,25 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
           .map((item) => item.text)
           .filter(Boolean),
         usefulLinks: usefulLinks.filter((link) => link.title && link.href),
-        createdAt: new Date().toISOString(),
+        createdAt: initialData?.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         privacy,
-        ownerId: user && user.id,
+        // If user is admin, allow setting ownerId to current user
+        // If editing, keep existing owner unless user is admin
+        ownerId: isAdmin 
+          ? user?.id 
+          : initialData?.ownerId || user?.id,
+        ...(initialData?.id && { id: initialData.id }),
       };
-      console.log({ product });
-      const result = await addDocument(
-        "products",
-        product,
-        new Date().toISOString(),
-        "/"
-      );
-      console.log({ result });
+
+      const path = initialData ? `/products/${initialData.id}` : "/";
+      const result = await (initialData
+        ? updateDocument("products", initialData.id, product, path)
+        : addDocument("products", product, new Date().toISOString(), path));
+console.log({ result, initialData, product, path });
       if ("id" in result) {
         onClose();
-        router.push("/products");
+        router.push(path);
       }
     } finally {
       setIsLoading(false);
@@ -141,7 +161,7 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-8 pb-[1rem]">
           {/* Main Content Grid */}
@@ -161,7 +181,8 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                         Privacy
                       </label>
                       <Switch
-                        checked={privacy === "PRIVATE"}
+                      defaultChecked
+                        checked={privacy === "PUBLIC"}
                         onValueChange={(checked) =>
                           setPrivacy(checked ? "PUBLIC" : "PRIVATE")
                         }
@@ -186,6 +207,7 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                       labelPlacement="outside"
                       disabled={isLoading}
                       required
+                      defaultValue={initialData?.title || ""}
                     />
                   </div>
 
@@ -207,6 +229,13 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
       transition-all duration-200 ease-in-out
       hover:border-gray-400 dark:hover:border-gray-600
       appearance-none cursor-pointer"
+                        defaultValue={
+                          (initialData?.category as
+                            | string
+                            | number
+                            | readonly string[]
+                            | undefined) || ""
+                        }
                       >
                         <option
                           value=""
@@ -236,6 +265,7 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                       variant="bordered"
                       disabled={isLoading}
                       rows={3}
+                      defaultValue={initialData?.description || ""}
                     />
                   </div>
                   <div>
@@ -249,6 +279,11 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
                       disabled={isLoading || !isAdmin}
                       value={!isAdmin ? "0" : undefined}
                       required
+                      defaultValue={
+                        initialData?.price
+                          ? (initialData.price / 100).toString()
+                          : "0"
+                      }
                     />
                   </div>
                 </div>
@@ -628,7 +663,9 @@ export default function AddProductPage({ onClose }: { onClose: () => void }) {
             ) : (
               <>
                 <Send className="h-5 w-5" />
-                <span className="font-medium">Add Snippet</span>
+                <span className="font-medium">
+                  {initialData ? "Update" : "Add"} Snippet
+                </span>
               </>
             )}
           </Button>

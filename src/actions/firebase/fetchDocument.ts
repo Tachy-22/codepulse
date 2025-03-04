@@ -14,8 +14,7 @@ export async function fetchDocument<T extends Record<string, unknown>>(
     }
 
     // Decode the documentId if it's URL-encoded
-    const decodedDocumentId = decodeURIComponent(documentId);
-    const docRef = doc(db, collectionName, decodedDocumentId);
+    const docRef = doc(db, collectionName, documentId);
     const docSnap = await getDoc(docRef);
     console.log({ docSnap });
     if (!docSnap.exists()) {

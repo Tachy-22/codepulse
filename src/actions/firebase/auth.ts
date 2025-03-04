@@ -8,12 +8,9 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   updateProfile,
-  GoogleAuthProvider,
-  signInWithPopup,
 } from "firebase/auth";
 import { createUser } from "./users";
 
-const googleProvider = new GoogleAuthProvider();
 
 export async function signIn(email: string, password: string, rememberMe: boolean = false) {
   try {
@@ -52,29 +49,7 @@ export async function signIn(email: string, password: string, rememberMe: boolea
   }
 }
 
-export async function signInWithGoogle() {
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const token = await result.user.getIdToken();
-    
-    const cookieStore = cookies();
-    cookieStore.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30, // 30 days for remember me
-    });
-
-    return {
-      success: true,
-      userId: result.user.uid,
-      token,
-    };
-  } catch (error: unknown) {
-    const firebaseError = error as import("firebase/app").FirebaseError;
-    return { success: false, error: firebaseError.message };
-  }
-}
+// Remove signInWithGoogle function completely
 
 export async function signOut() {
   try {

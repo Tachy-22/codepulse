@@ -7,15 +7,21 @@ import { fetchDocument } from "./fetchDocument";
 
 export async function createUser(input: CreateUserInput): Promise<{ success: boolean; error?: string }> {
   try {
-    // Check if user exists first
+    // Check if user exists first by ID
     const existingUser = await fetchDocument<User>("users", input.id);
     
     if (existingUser && 'data' in existingUser) {
+      // User already exists with this ID
       return { success: false, error: "User already exists" };
     }
-
+    
+    // Add default provider if not specified
+    const provider = input.provider || "EMAIL";
+    
+    // Create the user data
     const user: User = {
       ...input,
+      provider,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

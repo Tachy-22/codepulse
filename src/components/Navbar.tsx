@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useAppSelector } from "@/lib/redux/hooks";
 
 import ThemeToggle from "./ThemeToggle";
-import { Button } from "./ui/button";
 import { Menu, X, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -13,6 +12,7 @@ import SearchModal from "./SearchModal";
 
 import UserDropdown from "./UserDropdown";
 import AddSnippetModal from "./modals/AddSnippetModal";
+import { Button } from "@heroui/react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,23 +36,22 @@ export default function Navbar() {
       className="relative flex items-center rounded-xl cursor-pointer lg:flex-1  border border-zinc-200/50 dark:border-zinc-700/50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg text-zinc-400 dark:text-zinc-500"
       onClick={() => setIsSearchOpen(true)}
     >
-      <div className="px-4 py-2 w-full md:w-64  hidden md:block">Search...</div>
+      <div className="px-4 py-2 w-full md:w-64  hidden lg:block">Search...</div>
       <Search className="absolute right-3  h-5 w-5 text-zinc-400" />
     </motion.div>
   );
 
   const NavLinks = () => (
-    <>
+    <div className="flex items-center gap-4">
       <Link
         onClick={() => setIsOpen(false)}
         href="/products"
-        className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400"
+        className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 "
       >
         Snippets{" "}
       </Link>
-    
-      {userId && <AddSnippetModal />}
-    </>
+      <div className=""> {userId && <AddSnippetModal />}</div>
+    </div>
   );
 
   const AuthButtons = () => (
@@ -101,8 +100,8 @@ export default function Navbar() {
 
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
+                isIconOnly
+                onPress={() => setIsOpen(false)}
               >
                 <X className="h-6 w-6" />
               </Button>
@@ -135,11 +134,12 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8 w-full ">
-              <NavLinks />
-            </div>
+              <div className="md:flex hidden items-center justify-start  w-full">
+                {" "}
+                <NavLinks />
+              </div>
 
-            <div className="flex  items-center justify-end lg:justify-start md: w-full  md:gap-4  gap-1">
+            <div className="flex md:w-fit  w-full items-center justify-end lg:justify-start  md:gap-4  gap-1">
               <SearchBar />
               <AuthButtons />
               <div className="md:flex hidden">
@@ -152,8 +152,8 @@ export default function Navbar() {
             <div className="flex items-center  md:hidden">
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(!isOpen)}
+                isIconOnly
+                onPress={() => setIsOpen(!isOpen)}
               >
                 <Menu className="h-6 w-6" />
               </Button>

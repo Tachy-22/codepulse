@@ -37,7 +37,7 @@ const features = [
 const Features2 = () => {
   return (
     <div className="w-full py-20 ">
-      <h2 className="text-center text-4xl font-bold capitalize mb-16">
+      <h2 className="text-center text-4xl font-bold capitalize mb-16 text-black dark:text-white">
         Discover the Power of{" "}
         <span className="inline-flex text-blue-500 bg-blue-50 rounded-full p-3 whitespace-wrap">
           Code Snippets
