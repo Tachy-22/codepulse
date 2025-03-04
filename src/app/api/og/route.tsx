@@ -1,23 +1,24 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 
+// Specify edge runtime
 export const runtime = 'edge';
 
-// Configure options for the OG response
-export const contentType = 'image/png';
+// Set revalidation time (optional)
+export const revalidate = 60; // revalidate every minute
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const title = searchParams.get('title') || 'CodePulse';
-
   try {
-    // Load the font
-    const fontData = await fetch(
-      new URL("../../../assets/fonts/Inter_24pt-Bold.ttf", import.meta.url)
-    ).then((res) => res.arrayBuffer());
+    const { searchParams } = new URL(request.url);
+    const title = searchParams.get('title') || 'CodePulse';
 
-    // Generate the image
-    const imageResponse = new ImageResponse(
+    // Load font
+    const fontData = await fetch(
+      new URL('../../../assets/fonts/Inter_24pt-Bold.ttf', import.meta.url)
+    ).then(res => res.arrayBuffer());
+
+    // Generate image response
+    return new ImageResponse(
       (
         <div
           style={{
@@ -120,23 +121,15 @@ export async function GET(request: NextRequest) {
             weight: 700,
           },
         ],
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          'Content-Type': 'image/png',
+        }
       },
     );
-
-    // Add cache control headers to prevent caching issues on social platforms
-    const headers = new Headers(imageResponse.headers);
-    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-    headers.set('Content-Type', 'image/png');
-    
-    // Return the response with the added headers
-    return new Response(imageResponse.body, { 
-      status: imageResponse.status, 
-      headers
-    });
   } catch (error) {
     console.error('Error generating OG image:', error);
     
-    // If there's an error, return a fallback image or an error message
     return new Response('Failed to generate image', { 
       status: 500,
       headers: {
