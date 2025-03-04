@@ -15,6 +15,8 @@ import { ProductData } from "@/types";
 import AddSnippetModal from "./modals/AddSnippetModal";
 import DeleteConfirmationModal from "./modals/DeleteConfirmationModal";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { deleteDocument } from "@/actions/firebase/deleteDocument";
+import { useRouter } from "next/navigation";
 import {
   Dropdown,
   DropdownTrigger,
@@ -25,6 +27,7 @@ import {
 
 const Product = ({ product }: { product: ProductData }) => {
   const {
+    id,
     description,
     fileTree,
     usefulLinks,
@@ -36,6 +39,7 @@ const Product = ({ product }: { product: ProductData }) => {
     ownerId,
   } = product;
   const { user } = useAppSelector((state) => state.userSlice);
+  const router = useRouter();
 
   const [isCopied, setIsCopied] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -75,14 +79,22 @@ const Product = ({ product }: { product: ProductData }) => {
   const handleDeleteProduct = async () => {
     setIsDeleting(true);
     try {
-      // Here you would add the API call to delete the product
-      // For example: await deleteProduct(product.id);
-
-      // After successful deletion, you might want to redirect:
-      // router.push('/dashboard'); or window.location.href = '/dashboard';
-      console.log("Deleting product:", product);
+      if (!id) {
+        throw new Error("Product ID is missing");
+      }
+      
+      const result = await deleteDocument("products", id, "/dashboard");
+      
+      if ("success" in result) {
+        // Show success notification if needed
+        router.push("/dashboard");
+      } else {
+        // Handle error
+        console.error("Failed to delete product:", result.message);
+        // You could show an error notification here
+      }
     } catch (error) {
-      console.error("Failed to delete product:", error);
+      console.error("Error deleting product:", error);
     } finally {
       setIsDeleting(false);
       setIsDeleteModalOpen(false);
@@ -90,8 +102,8 @@ const Product = ({ product }: { product: ProductData }) => {
   };
 
   return (
-    <>
-      <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full">
+    <div className="py-6">
+      <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full ">
         {/* Replace with NextUI Dropdown */}
         <div className="flex items-center gap-2 absolute right-5 border rounded-full dark:bg-black bg-white">
           <Dropdown>
@@ -132,7 +144,9 @@ const Product = ({ product }: { product: ProductData }) => {
                 <>
                   <DropdownItem
                     key="delete-product"
-                    startContent={<Trash2 className="h-4 w-4 hover:text-danger" />}
+                    startContent={
+                      <Trash2 className="h-4 w-4 hover:text-danger" />
+                    }
                     className="hover:text-danger"
                     onClick={() => setIsDeleteModalOpen(true)}
                   >
@@ -218,7 +232,7 @@ const Product = ({ product }: { product: ProductData }) => {
 
         {/* Current Level */}
         {currentLevel && currentLevel.length > 0 && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 px4">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
               Current Capabilities
             </h2>
@@ -226,11 +240,11 @@ const Product = ({ product }: { product: ProductData }) => {
               {currentLevel.map((item, index) => (
                 <div
                   key={index}
-                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10"
+                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10 ml-4"
                 >
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-blue-500 to-blue-300 dark:from-blue-400 dark:to-blue-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/20" />
-                  <div className="ml-4 rounded-xl px-4  transition-all duration-300 ">
+                  <div className="lg:ml-4  rounded-xl   transition-all duration-300 ">
                     <span className="text-gray-600 dark:text-gray-300">
                       {item}
                     </span>
@@ -251,11 +265,11 @@ const Product = ({ product }: { product: ProductData }) => {
               {optimizationSuggestions.map((item, index) => (
                 <div
                   key={index}
-                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10"
+                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10 ml-4"
                 >
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-amber-500 to-amber-300 dark:from-amber-400 dark:to-amber-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg shadow-amber-500/20" />
-                  <div className="ml-2 rounded-xl px-4  ansition-all duration-300 ">
+                  <div className="lg:ml-4  rounded-xl   transition-all duration-300 ">
                     <span className="text-gray-600 dark:text-gray-300">
                       {item}
                     </span>
@@ -306,7 +320,7 @@ const Product = ({ product }: { product: ProductData }) => {
         onConfirm={handleDeleteProduct}
         onCancel={() => setIsDeleteModalOpen(false)}
       />
-    </>
+    </div>
   );
 };
 

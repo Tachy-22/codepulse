@@ -29,10 +29,7 @@ const geistMono = localFont({
 const inter = Inter({ subsets: ["latin"] });
 
 // Determine the base URL for metadata
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-  (process.env.NODE_ENV === 'production' 
-    ? 'https://codepulse-kohl.vercel.app' // Your actual production domain
-    : 'http://localhost:3000');
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string 
 
 export const metadata: Metadata = {
   title: {

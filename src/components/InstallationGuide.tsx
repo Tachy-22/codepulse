@@ -87,7 +87,7 @@ const InstallationGuide = ({ type }: { type: "nextjs" | "stripe" }) => {
   const borderColor = "blue";
 
   return (
-    <div className="p-4">
+    <div className="p-4 px-1 lg:px-4">
       <div className="max-w-4xl mx-auto flex flex-col gap-8">
         <div className="space-y-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -100,7 +100,7 @@ const InstallationGuide = ({ type }: { type: "nextjs" | "stripe" }) => {
 
         <div className="flex flex-col gap-10">
           {guide.steps.map((step, index) => (
-            <div key={index} className="relative pl-8 ml-8">
+            <div key={index} className="relative pl-8 lg:ml-8 ml-6">
               {/* Vertical Line */}
               <div
                 className={`absolute left-0 top-[28px] h-full w-[2px] bg-gradient-to-b from-${borderColor}-500 to-${borderColor}-300 dark:from-${borderColor}-400 dark:to-${borderColor}-600`}
