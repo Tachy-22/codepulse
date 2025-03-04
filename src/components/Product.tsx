@@ -82,22 +82,25 @@ const Product = ({ product }: { product: ProductData }) => {
       console.error("Failed to copy:", err);
     }
   };
-  
+
   const handleShareToX = () => {
     const text = `🚀 Just dropped a sleek code snippet! Check it out here: ${window.location.href} 💻✨\n\nIt's clean, efficient, and ready to roll. Let me know what you think! 👀🔥 #Coding #DevLife #codepulse`;
-    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-    
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      text
+    )}`;
+
     // Center popup window
     const width = 550;
     const height = 420;
     const left = window.screen.width / 2 - width / 2;
+    const right = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
-    
+
     // Open popup window with centered position
     window.open(
       shareUrl,
-      'Share to X',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no`
+      "Share to X",
+      `width=${width},height=${height},left=${left},right=${right},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no`
     );
   };
 
@@ -110,10 +113,10 @@ const Product = ({ product }: { product: ProductData }) => {
         <div className="flex items-center gap-2 absolute right-5 border rounded-full">
           <Dropdown>
             <DropdownTrigger>
-              <Button 
+              <Button
                 isIconOnly
                 variant="light"
-                className="p-0 bg-transparent" 
+                className="p-0 bg-transparent"
                 radius="full"
               >
                 <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -122,15 +125,18 @@ const Product = ({ product }: { product: ProductData }) => {
             <DropdownMenu aria-label="Product actions">
               <DropdownItem
                 key="copy"
-                startContent={isCopied ? 
-                  <Check className="h-4 w-4" /> : 
-                  <Clipboard className="h-4 w-4" />
+                startContent={
+                  isCopied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Clipboard className="h-4 w-4" />
+                  )
                 }
                 onClick={handleCopy}
               >
                 Copy Link
               </DropdownItem>
-              
+
               <DropdownItem
                 key="share-x"
                 startContent={<Twitter className="h-4 w-4" />}
@@ -138,16 +144,12 @@ const Product = ({ product }: { product: ProductData }) => {
               >
                 Share to X
               </DropdownItem>
-              
+
               {user && (ownerId === user.id || user.role === "ADMIN") ? (
-                <DropdownItem
-                  key="add-snippet"
-                  className="p-0"
-                >
+                <DropdownItem key="add-snippet" className="p-0">
                   <AddSnippetModal showAsMenuItem product={product} />
                 </DropdownItem>
               ) : null}
-
             </DropdownMenu>
           </Dropdown>
         </div>
