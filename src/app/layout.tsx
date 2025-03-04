@@ -31,6 +31,21 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "CodePulse",
   description: "Your code snippet hub. Created by Jeff",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || 
+    (process.env.NODE_ENV === 'production' 
+      ? 'https://your-production-domain.com' // Replace with your production URL
+      : 'http://localhost:3000')
+  ),
+  openGraph: {
+    type: 'website',
+    siteName: 'CodePulse',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@your_twitter_handle', // Replace with your Twitter handle
+  },
 };
 
 export default async function RootLayout({

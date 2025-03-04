@@ -3,10 +3,12 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
+// Configure options for the OG response
+export const contentType = 'image/png';
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title') || 'CodePulse';
- // const id = searchParams.get('id');
 
   try {
     // Load the font
@@ -14,7 +16,8 @@ export async function GET(request: NextRequest) {
       new URL("../../../assets/fonts/Inter_24pt-Bold.ttf", import.meta.url)
     ).then((res) => res.arrayBuffer());
 
-    return new ImageResponse(
+    // Generate the image
+    const imageResponse = new ImageResponse(
       (
         <div
           style={{
@@ -66,6 +69,8 @@ export async function GET(request: NextRequest) {
               fontWeight: 'bold',
               textAlign: 'center',
               marginBottom: '20px',
+              maxWidth: '90%',
+              wordBreak: 'break-word'
             }}
           >
             {title}
@@ -117,8 +122,26 @@ export async function GET(request: NextRequest) {
         ],
       },
     );
+
+    // Add cache control headers to prevent caching issues on social platforms
+    const headers = new Headers(imageResponse.headers);
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    headers.set('Content-Type', 'image/png');
+    
+    // Return the response with the added headers
+    return new Response(imageResponse.body, { 
+      status: imageResponse.status, 
+      headers
+    });
   } catch (error) {
     console.error('Error generating OG image:', error);
-    return new Response('Failed to generate image', { status: 500 });
+    
+    // If there's an error, return a fallback image or an error message
+    return new Response('Failed to generate image', { 
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    });
   }
 }
