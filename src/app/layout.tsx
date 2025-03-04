@@ -78,3 +78,7 @@ export default async function RootLayout({
     </html>
   );
 }
+
+// Add this to your existing .env.local file or create it if it doesn't exist:
+// NEXT_PUBLIC_BASE_URL=http://localhost:3000
+// In production, set this to your actual domain
