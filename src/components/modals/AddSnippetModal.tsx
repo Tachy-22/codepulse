@@ -27,10 +27,10 @@ export default function AddSnippetModal({
       <Button
         size="sm"
         variant={showAsMenuItem ? "light" : "ghost"}
-        className={`${
+        className={` rounded-[0.25rem]  ${
           showAsMenuItem
-            ? " w-full   text-left rounded-none flex items-center justify-start  px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-            : "w-fit rounded-[0.25rem] border-black/30 dark:border-white/50"
+            ? " w-full rounded-[0.5rem]   text-left flex items-center justify-start   py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-stone-100 dark:hover:bg-stone-700"
+            : "w-fit border-black/30 dark:border-white/50"
         }`}
         onPress={onOpen}
       >

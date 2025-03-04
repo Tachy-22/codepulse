@@ -64,7 +64,7 @@ export default async function ProductsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-center">
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-700 dark:text-gray-200">
         Code Snippets Library
       </h1>
       <Products />

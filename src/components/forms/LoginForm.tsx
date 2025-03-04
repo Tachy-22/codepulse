@@ -20,6 +20,7 @@ import { getErrorMessage } from "@/lib/utils";
 export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const {
     register,
@@ -84,6 +85,7 @@ export default function LoginForm() {
 
    const handleGoogleSignIn = async () => {
      setError("");
+     setIsGoogleLoading(true);
      try {
        const result = await signInWithGoogle();
        if (result.success) {
@@ -92,8 +94,11 @@ export default function LoginForm() {
        } else {
          setError(result.error || "Something went wrong");
        }
+     } catch (error) {
+       setError("Failed to sign in with Google");
+       console.error(error);
      } finally {
-       setIsLoading(false);
+       setIsGoogleLoading(false);
      }
    };
 
@@ -117,10 +122,15 @@ export default function LoginForm() {
 
         <button
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-[0.5rem] text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+          disabled={isGoogleLoading}
+          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-[0.5rem] text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <FcGoogle size={24} />
-          Continue with Google
+          {isGoogleLoading ? (
+            <Loader className="h-5 w-5 animate-spin text-blue-600" />
+          ) : (
+            <FcGoogle size={24} />
+          )}
+          {isGoogleLoading ? "Signing in..." : "Continue with Google"}
         </button>
 
         <div className="relative">

@@ -54,16 +54,17 @@ export default function UserDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 lg:px-4 lg:py-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-zinc-900 transition-colors duration-200 "
       >
-        <span className="text-gray-700 dark:text-gray-300 lg:flex hidden">
-          {email}
-        </span>
         <Image
           src="/user-icon.png"
           alt="Avatar"
           width={1000}
           height={1000}
-          className="rounded-full border border-gray4300 flex lg:hidden overflow-hidden w-[40px]  min-w-[40px] h-[40px]"
+          className="rounded-full border border-gray4300 flex  overflow-hidden w-[40px]  min-w-[40px] h-[40px]"
         />
+        <span className="text-gray-700 dark:text-gray-300 lg:flex hidden">
+          {email}
+        </span>
+
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}

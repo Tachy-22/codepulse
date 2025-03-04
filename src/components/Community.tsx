@@ -19,8 +19,9 @@ const Community = () => {
           you to enhance your coding workflow.
         </p>
         <div className="  bg-gray-50 dark:bg-gray-50/10 md:w-1/2 p-4 px-6 rounded-full flex gap-4 text-cyan-500">
-          <strong>500+</strong>
-          Unique Code Snippets Available
+        Explore our
+          <strong>10</strong>
+          Unique Code Snippets for free
         </div>
       </div>
       <div className="flex md:flex-row flex-col h-full items-center gap-4 md:absolute md:top-[3rem] w-full md:w-[22%] lg:-left-[2rem]">

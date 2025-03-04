@@ -1,11 +1,19 @@
 "use client";
 import CodeTabs from "@/components/CodeTabs";
 import React, { useState } from "react";
-import { Link2, Clipboard, Check, MoreVertical, Twitter } from "lucide-react";
+import {
+  Link2,
+  Clipboard,
+  Check,
+  MoreVertical,
+  Twitter,
+  Trash2,
+} from "lucide-react";
 import FileTree from "@/components/FileTree";
 import CodeBlock from "@/components/ui/code-block";
 import { ProductData } from "@/types";
 import AddSnippetModal from "./modals/AddSnippetModal";
+import DeleteConfirmationModal from "./modals/DeleteConfirmationModal";
 import { useAppSelector } from "@/lib/redux/hooks";
 import {
   Dropdown,
@@ -14,49 +22,6 @@ import {
   DropdownItem,
   Button,
 } from "@heroui/react";
-import { Skeleton } from "@heroui/skeleton";
-
-const LoadingSkeleton = () => {
-  return (
-    <div className="p-4">
-      <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full">
-        {/* Basic Info Skeleton */}
-        <div className="space-y-4">
-          <Skeleton className="h-9 w-3/4" />
-          <Skeleton className="h-6 w-full" />
-        </div>
-
-        {/* Installation Steps Skeleton */}
-        <div className="flex flex-col gap-6">
-          <Skeleton className="h-7 w-48" />
-          <div className="space-y-6">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="border-l border-gray-700 pl-6 lg:pl-8 pb-4 space-y-4"
-              >
-                <Skeleton className="h-6 w-1/3" />
-                <Skeleton className="h-24 w-full" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* File Tree Skeleton */}
-        <div className="flex flex-col gap-6">
-          <Skeleton className="h-7 w-48" />
-          <Skeleton className="h-40 w-full rounded-[1.25rem]" />
-        </div>
-
-        {/* Code Files Skeleton */}
-        <div className="flex flex-col gap-6">
-          <Skeleton className="h-7 w-48" />
-          <Skeleton className="h-60 w-full rounded-[1.25rem]" />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Product = ({ product }: { product: ProductData }) => {
   const {
@@ -73,6 +38,8 @@ const Product = ({ product }: { product: ProductData }) => {
   const { user } = useAppSelector((state) => state.userSlice);
 
   const [isCopied, setIsCopied] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -105,10 +72,25 @@ const Product = ({ product }: { product: ProductData }) => {
     );
   };
 
-  if (!product) return <LoadingSkeleton />;
+  const handleDeleteProduct = async () => {
+    setIsDeleting(true);
+    try {
+      // Here you would add the API call to delete the product
+      // For example: await deleteProduct(product.id);
+
+      // After successful deletion, you might want to redirect:
+      // router.push('/dashboard'); or window.location.href = '/dashboard';
+      console.log("Deleting product:", product);
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
+    }
+  };
 
   return (
-    <div className="p-4">
+    <>
       <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full">
         {/* Replace with NextUI Dropdown */}
         <div className="flex items-center gap-2 absolute right-5 border rounded-full dark:bg-black bg-white">
@@ -147,9 +129,19 @@ const Product = ({ product }: { product: ProductData }) => {
               </DropdownItem>
 
               {user && (ownerId === user.id || user.role === "ADMIN") ? (
-                <DropdownItem key="add-snippet" className="p-0">
-                  <AddSnippetModal showAsMenuItem product={product} />
-                </DropdownItem>
+                <>
+                  <DropdownItem
+                    key="delete-product"
+                    startContent={<Trash2 className="h-4 w-4 hover:text-danger" />}
+                    className="hover:text-danger"
+                    onClick={() => setIsDeleteModalOpen(true)}
+                  >
+                    Delete Product
+                  </DropdownItem>
+                  <DropdownItem key="add-snippet" className="p-0">
+                    <AddSnippetModal showAsMenuItem product={product} />
+                  </DropdownItem>
+                </>
               ) : null}
             </DropdownMenu>
           </Dropdown>
@@ -305,7 +297,16 @@ const Product = ({ product }: { product: ProductData }) => {
           </div>
         )}
       </div>
-    </div>
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        itemName={title?.toString() || "this product"}
+        isDeleting={isDeleting}
+        onConfirm={handleDeleteProduct}
+        onCancel={() => setIsDeleteModalOpen(false)}
+      />
+    </>
   );
 };
 
