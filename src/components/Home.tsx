@@ -282,7 +282,7 @@ const ShinyButton = ({
   );
 };
 
-// Improved gradient text component that works better on mobile
+// Fixed gradient text component with proper fallback for mobile browsers
 const GradientText = ({
   children,
   from = "from-blue-600",
@@ -296,53 +296,47 @@ const GradientText = ({
   to?: string;
   className?: string;
 }) => {
+  const [supportsGradientText, setSupportsGradientText] = useState(true);
+  
+  // Check for bg-clip-text support
+  useEffect(() => {
+    // Feature detection for background-clip: text
+    const tempEl = document.createElement('div');
+    if (typeof tempEl.style.backgroundClip === 'undefined' && 
+        typeof tempEl.style.webkitBackgroundClip === 'undefined') {
+      setSupportsGradientText(false);
+    }
+  }, []);
+  
+  if (!supportsGradientText) {
+    // Fallback for browsers that don't support gradient text
+    return (
+      <span className={`font-bold text-blue-600 dark:text-blue-400 ${className}`}>
+        {children}
+      </span>
+    );
+  }
+
   return (
     <span className={`relative inline-block ${className}`}>
+      {/* Primary gradient text */}
       <span
-        className={`relative z-10 text-transparent bg-clip-text bg-gradient-to-r ${from} ${via} ${to}`}
+        className={`bg-clip-text text-transparent bg-gradient-to-r ${from} ${via} ${to}`}
+        style={{
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}
       >
         {children}
       </span>
-      {/* Fallback solid color for devices that don't support gradient text */}
-      <span className="absolute inset-0 text-blue-600 dark:text-blue-400 z-0 opacity-0">
+      
+      {/* Hidden backup text that will show if the gradient fails */}
+      <span className="sr-only">
         {children}
       </span>
     </span>
   );
 };
-
-// // Code window component with better styling
-// const CodeWindow = ({
-//   code,
-//   language = "jsx",
-//   title = "Example.jsx",
-//   theme = "dark"
-// }: {
-//   code: string,
-//   language?: string,
-//   title?: string,
-//   theme?: "dark" | "light"
-// }) => {
-//   const themeClasses = theme === "dark"
-//     ? "bg-gray-900 text-gray-100 border-gray-700"
-//     : "bg-white text-gray-800 border-gray-200";
-
-//   return (
-//     <div className={`rounded-xl overflow-hidden border ${themeClasses} shadow-2xl`}>
-//       <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border-b border-gray-700">
-//         <div className="flex space-x-2">
-//           <div className="w-3 h-3 rounded-full bg-red-400"></div>
-//           <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-//           <div className="w-3 h-3 rounded-full bg-green-400"></div>
-//         </div>
-//         <div className="ml-4 text-sm text-gray-400">{title}</div>
-//       </div>
-//       <pre className={`p-4 overflow-x-auto ${language === "jsx" ? "language-jsx" : "language-typescript"}`}>
-//         <code>{code}</code>
-//       </pre>
-//     </div>
-//   );
-// };
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -362,10 +356,10 @@ export default function Home() {
       {/* Enhanced Hero Section with Particles */}
       <section
         ref={heroRef}
-        className="relative max-h-screen h-fit py-[15rem] w-full flex items-center justify-center overflow-hidden"
+        className="relative max-h-screen h-fit py-[15rem] w-full flex items-center justify-center overflow-hidden "
         aria-labelledby="hero-heading"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="absolute  inset-0 bg-gradient-to-b from-blue-50/80 to-white dark:from-gray-900 dark:to-gray-950">
           <Particles />
         </div>
 
@@ -374,7 +368,7 @@ export default function Home() {
         <GlowEffect className="w-[600px] h-[600px] bg-purple-400/20 dark:bg-purple-500/10 -bottom-[100px] -right-[100px] animate-pulse" />
 
         <motion.div
-          className="container mx-auto px-4 md:px-6 relative z-10"
+          className="max-w-7xl w-full mx-auto px-2 md:px-4 relative z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
@@ -422,7 +416,7 @@ export default function Home() {
 
         {/* Enhanced floating code blocks decoration */}
         <motion.div
-          className="absolute bottom-[10%]  lg:bottom-[20%] md:bottom-[8%] right-[10%] opacity-80 hidden md:block"
+          className="absolute bottom-[10%]  lg:bottom-[20%] md:bottom-[8%] right-[1%] lg:right-[5%] xl:right-[10%] opacity-80 hidden md:block"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 0.8, x: 0 }}
           transition={{ delay: 1, duration: 1 }}
@@ -437,7 +431,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div
-          className="absolute top-[8%] left-[5%] lg:top-[30%] lg:left-[10%] opacity-80 hidden md:block"
+          className="absolute top-[5%] left-[2%] lg:top-[10%] lg:left-[5%] xl:left-[10%] opacity-80 hidden md:block"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 0.8, x: 0 }}
           transition={{ delay: 1.2, duration: 1 }}
