@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
-import { Button } from "@heroui/react";
+import { Button, Accordion, AccordionItem } from "@heroui/react";
 
 // SEO metadata component
 const Metadata = () => (
@@ -52,6 +52,35 @@ const featuredSnippets = [
   },
 ];
 
+// FAQ data
+const faqItems = [
+  {
+    question: "How do I contribute my own code snippets?",
+    answer:
+      "After signing up, you can submit your snippets through our 'Contribute' page. All submissions are reviewed by our team to ensure quality and security before being published to the platform.",
+  },
+  {
+    question: "Are the code snippets free to use?",
+    answer:
+      "Yes, all snippets on CodePulse are free to use in personal and commercial projects. We do ask that you don't redistribute collections of our snippets as your own product.",
+  },
+  {
+    question: "How often are new snippets added?",
+    answer:
+      "Our library grows every day! We add new verified snippets daily, and our community contributes dozens of new snippets each week that go through our quality review process.",
+  },
+  {
+    question: "Can I request a specific snippet if I can't find it?",
+    answer:
+      "Absolutely! You can request snippets through our community forum. Popular requests often get prioritized by our contributors and team members.",
+  },
+  {
+    question: "Do you offer support for the snippets?",
+    answer:
+      "Each snippet includes documentation on usage. For additional help, our community forum is a great resource where both our team and other developers can assist with implementation questions.",
+  },
+];
+
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -77,32 +106,41 @@ const itemVariants = {
   },
 };
 
-// Particle component for hero section
+// Enhanced Particle component with more variety
 const Particles = () => {
-  const particles = Array.from({ length: 40 }, (_, i) => i);
+  const particles = Array.from({ length: 60 }, (_, i) => i);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {particles.map((p, i) => {
-        const size = Math.random() * 4 + 1;
+        const size = Math.random() * 5 + 1;
         const duration = Math.random() * 20 + 10;
         const x = Math.random() * 100;
-        const delay = Math.random() * 2;
+        const delay = Math.random() * 5;
+        const opacity = Math.random() * 0.5 + 0.2;
 
         return (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-blue-400/30 dark:bg-blue-300/20"
+            className="absolute rounded-full"
             style={{
               width: size,
               height: size,
               x: `${x}%`,
               y: "-10%",
+              background:
+                i % 3 === 0
+                  ? "rgba(125, 187, 255, 0.6)"
+                  : i % 3 === 1
+                  ? "rgba(147, 149, 255, 0.6)"
+                  : "rgba(168, 144, 255, 0.6)",
               filter: "blur(1px)",
+              opacity,
             }}
             animate={{
               y: "110%",
-              opacity: [0, 1, 0.5, 0],
+              opacity: [opacity, opacity * 1.2, opacity * 0.5, 0],
+              rotate: Math.random() > 0.5 ? [0, 90] : [0, -90],
             }}
             transition={{
               duration,
@@ -117,19 +155,34 @@ const Particles = () => {
   );
 };
 
-// Floating element with 3D effect
-const FloatingElement = ({ children }: { children: React.ReactNode }) => (
+// Enhanced floating element with more 3D effect
+const FloatingElement = ({
+  children,
+  delay = 0,
+  scale = 1,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  scale?: number;
+}) => (
   <motion.div
     className="relative"
+    style={{
+      transformStyle: "preserve-3d",
+      perspective: "1000px",
+      scale,
+    }}
     animate={{
-      y: [0, -10, 0],
-      rotateX: [0, 2, 0],
-      rotateY: [0, -2, 0],
+      y: [0, -15, 0],
+      rotateX: [0, 4, 0],
+      rotateY: [0, -4, 0],
+      z: [0, 10, 0],
     }}
     transition={{
-      duration: 6,
+      duration: 8,
       repeat: Infinity,
       ease: "easeInOut",
+      delay,
     }}
   >
     {children}
@@ -143,37 +196,153 @@ const GlowEffect = ({ className }: { className: string }) => (
   ></div>
 );
 
-// Animated gradient border card
+// Improved animated gradient border card with hover effect
 const GradientCard = ({
   className,
   children,
+  hoverEffect = true,
 }: {
   className?: string;
   children: React.ReactNode;
+  hoverEffect?: boolean;
 }) => (
-  <div
-    className={`relative rounded-2xl p-[1px] overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 shadow-xl ${className}`}
+  <motion.div
+    className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}
+    whileHover={
+      hoverEffect
+        ? {
+            scale: 1.02,
+            transition: { duration: 0.2 },
+          }
+        : {}
+    }
   >
-    <div className="absolute inset-0 bg-[linear-gradient(45deg,var(--tw-gradient-stops))] from-blue-500 to-purple-500 opacity-30">
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500">
       <motion.div
         className="w-full h-full"
         animate={{
           background: [
             "radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.5) 0%, transparent 50%)",
-            "radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.5) 0%, transparent 50%)",
-            "radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.5) 0%, transparent 50%)",
-            "radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.5) 0%, transparent 50%)",
+            "radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.5) 0%, transparent 50%)",
+            "radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.5) 0%, transparent 50%)",
+            "radial-gradient(circle at 0% 100%, rgba(79, 70, 229, 0.5) 0%, transparent 50%)",
             "radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.5) 0%, transparent 50%)",
           ],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
       />
     </div>
-    <div className="relative h-full w-full rounded-2xl bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm p-6">
+    <div className="relative h-full w-full rounded-2xl bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm p-6 shadow-lg">
       {children}
     </div>
-  </div>
+  </motion.div>
 );
+
+// New shiny button component with better hover effects
+const ShinyButton = ({
+  children,
+  primary = true,
+  className = "",
+  ...props
+}: {
+  children: React.ReactNode;
+  primary?: boolean;
+  className?: string;
+  [key: string]: unknown;
+}) => {
+  return (
+    <motion.button
+      className={`relative rounded-xl px-8 py-4 text-lg font-medium shadow-lg overflow-hidden ${
+        primary
+          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+          : "border-2 border-blue-400/30 text-blue-600 dark:text-blue-300"
+      } ${className}`}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
+      {...props}
+    >
+      {primary && (
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20"
+          animate={{
+            x: ["-100%", "100%"],
+            opacity: [0, 0.5, 0],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "easeInOut",
+            repeatDelay: 2,
+          }}
+        />
+      )}
+      <span className="relative z-10">{children}</span>
+    </motion.button>
+  );
+};
+
+// Improved gradient text component that works better on mobile
+const GradientText = ({
+  children,
+  from = "from-blue-600",
+  via = "via-indigo-600",
+  to = "to-purple-600",
+  className = "",
+}: {
+  children: React.ReactNode;
+  from?: string;
+  via?: string;
+  to?: string;
+  className?: string;
+}) => {
+  return (
+    <span className={`relative inline-block ${className}`}>
+      <span
+        className={`relative z-10 text-transparent bg-clip-text bg-gradient-to-r ${from} ${via} ${to}`}
+      >
+        {children}
+      </span>
+      {/* Fallback solid color for devices that don't support gradient text */}
+      <span className="absolute inset-0 text-blue-600 dark:text-blue-400 z-0 opacity-0">
+        {children}
+      </span>
+    </span>
+  );
+};
+
+// // Code window component with better styling
+// const CodeWindow = ({
+//   code,
+//   language = "jsx",
+//   title = "Example.jsx",
+//   theme = "dark"
+// }: {
+//   code: string,
+//   language?: string,
+//   title?: string,
+//   theme?: "dark" | "light"
+// }) => {
+//   const themeClasses = theme === "dark"
+//     ? "bg-gray-900 text-gray-100 border-gray-700"
+//     : "bg-white text-gray-800 border-gray-200";
+
+//   return (
+//     <div className={`rounded-xl overflow-hidden border ${themeClasses} shadow-2xl`}>
+//       <div className="flex items-center px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-900 border-b border-gray-700">
+//         <div className="flex space-x-2">
+//           <div className="w-3 h-3 rounded-full bg-red-400"></div>
+//           <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+//           <div className="w-3 h-3 rounded-full bg-green-400"></div>
+//         </div>
+//         <div className="ml-4 text-sm text-gray-400">{title}</div>
+//       </div>
+//       <pre className={`p-4 overflow-x-auto ${language === "jsx" ? "language-jsx" : "language-typescript"}`}>
+//         <code>{code}</code>
+//       </pre>
+//     </div>
+//   );
+// };
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -190,19 +359,19 @@ export default function Home() {
     <div className="flex flex-col gap-0 overflow-hidden min-h-screen w-full bg-white dark:bg-gray-950">
       <Metadata />
 
-      {/* Hero Section with Particles */}
+      {/* Enhanced Hero Section with Particles */}
       <section
         ref={heroRef}
-        className="relative min-h-screen w-full flex items-center justify-center overflow-hidden"
+        className="relative max-h-screen h-fit py-[15rem] w-full flex items-center justify-center overflow-hidden"
         aria-labelledby="hero-heading"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-white dark:from-gray-900 dark:to-gray-950">
           <Particles />
         </div>
 
-        {/* Glow effects */}
-        <GlowEffect className="w-[500px] h-[500px] bg-blue-400/20 dark:bg-blue-500/10 -top-[100px] -left-[100px]" />
-        <GlowEffect className="w-[500px] h-[500px] bg-purple-400/20 dark:bg-purple-500/10 -bottom-[100px] -right-[100px]" />
+        {/* Enhanced glow effects */}
+        <GlowEffect className="w-[600px] h-[600px] bg-blue-400/20 dark:bg-blue-500/10 -top-[100px] -left-[100px] animate-pulse" />
+        <GlowEffect className="w-[600px] h-[600px] bg-purple-400/20 dark:bg-purple-500/10 -bottom-[100px] -right-[100px] animate-pulse" />
 
         <motion.div
           className="container mx-auto px-4 md:px-6 relative z-10"
@@ -218,13 +387,11 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8, type: "spring" }}
             >
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 dark:from-blue-300 dark:via-blue-400 dark:to-purple-400">
-                CodePulse
-              </span>
+              <GradientText>CodePulse</GradientText>
             </motion.h1>
 
             <motion.p
-              className="text-xl md:text-2xl mb-10 text-gray-700/90 dark:text-gray-300/90 leading-relaxed"
+              className="text-xl md:text-2xl mb-12 text-gray-700/90 dark:text-gray-300/90 leading-relaxed"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
@@ -239,57 +406,52 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.8 }}
             >
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white dark:from-blue-500 dark:to-blue-400 shadow-lg shadow-blue-500/25 dark:shadow-blue-500/15 rounded-xl px-8 py-3 text-lg font-medium transition-all duration-300 transform hover:scale-105"
-                aria-label="Browse code snippets"
-              >
+              <ShinyButton primary aria-label="Browse code snippets">
                 Browse Snippets
-              </Button>
-              <Button
-                size="lg"
-                variant="bordered"
-                className="border-2 border-blue-500/50 text-blue-600 hover:bg-blue-50 dark:border-blue-400/30 dark:text-blue-300 dark:hover:bg-blue-900/30 rounded-xl px-8 py-3 text-lg font-medium backdrop-blur-sm transition-all duration-300 transform hover:scale-105"
+              </ShinyButton>
+
+              <ShinyButton
+                primary={false}
                 aria-label="Share your code snippets"
               >
                 Share Your Code
-              </Button>
+              </ShinyButton>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* Floating code blocks decoration */}
+        {/* Enhanced floating code blocks decoration */}
         <motion.div
-          className="absolute bottom-[20%] md:bottom-[15%] right-[10%] opacity-70 hidden md:block"
+          className="absolute bottom-[10%]  lg:bottom-[20%] md:bottom-[8%] right-[10%] opacity-80 hidden md:block"
           initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 0.7, x: 0 }}
+          animate={{ opacity: 0.8, x: 0 }}
           transition={{ delay: 1, duration: 1 }}
         >
-          <FloatingElement>
-            <div className="w-48 h-36 bg-blue-950/80 backdrop-blur-sm rounded-lg shadow-xl border border-blue-500/20 p-4">
-              <pre className="text-xs text-blue-300">
-                <code>{`function pulse() {\n  // code\n  return magic;\n}`}</code>
+          <FloatingElement delay={0.2} scale={0.8}>
+            <div className="w-64 h-48 bg-blue-950/90 backdrop-blur-sm rounded-xl shadow-2xl border border-blue-500/20 p-4 overflow-hidden">
+              <pre className="text-sm text-blue-300">
+                <code>{`function useCodePulse(id) {\n  const [snippet, setSnippet] = useState();\n  \n  // Fetch snippet by ID\n  useEffect(() => {\n    // Magic happens here\n    return snippetData;\n  }, [id]);\n}`}</code>
               </pre>
             </div>
           </FloatingElement>
         </motion.div>
 
         <motion.div
-          className="absolute top-[30%] left-[10%] opacity-70 hidden md:block"
+          className="absolute top-[8%] left-[5%] lg:top-[30%] lg:left-[10%] opacity-80 hidden md:block"
           initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 0.7, x: 0 }}
+          animate={{ opacity: 0.8, x: 0 }}
           transition={{ delay: 1.2, duration: 1 }}
         >
-          <FloatingElement>
-            <div className="w-40 h-32 bg-purple-950/80 backdrop-blur-sm rounded-lg shadow-xl border border-purple-500/20 p-4">
-              <pre className="text-xs text-purple-300">
-                <code>{`<Component\n  props="data"\n/>`}</code>
+          <FloatingElement delay={0.5} scale={1.1}>
+            <div className="w-56 h-40 bg-purple-950/90 backdrop-blur-sm rounded-xl shadow-2xl border border-purple-500/20 p-4 overflow-hidden">
+              <pre className="text-sm text-purple-300">
+                <code>{`<CodeSnippet\n  language="typescript"\n  title="Auth Hook"\n  showLineNumbers\n  copyable\n>\n  {code}\n</CodeSnippet>`}</code>
               </pre>
             </div>
           </FloatingElement>
         </motion.div>
 
-        {/* Animated scroll indicator */}
+        {/* Animated scroll indicator with better animation */}
         <motion.div
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
           initial={{ opacity: 0 }}
@@ -301,13 +463,19 @@ export default function Home() {
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <span>Scroll to explore</span>
-            <svg
+            <span className="font-medium">Scroll to explore</span>
+            <motion.svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              animate={{ y: [0, 5, 0] }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             >
               <path
                 strokeLinecap="round"
@@ -315,8 +483,44 @@ export default function Home() {
                 strokeWidth={2}
                 d="M19 14l-7 7m0 0l-7-7m7 7V3"
               />
-            </svg>
+            </motion.svg>
           </motion.div>
+        </motion.div>
+
+        {/* Stats floating card */}
+        <motion.div
+          className="absolute bottom-[2%] left-[5%] lg:bottom-[10%] lg:left-[15%] opacity-0 hidden md:block"
+          animate={{ opacity: [0, 0.9], y: [50, 0] }}
+          transition={{ delay: 1.8, duration: 1 }}
+        >
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-5 rounded-xl shadow-xl border border-blue-100 dark:border-blue-900/30">
+            <div className="flex gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  1200+
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  Snippets
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  5k+
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  Developers
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  99%
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  Satisfaction
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </section>
 
@@ -337,9 +541,9 @@ export default function Home() {
           >
             <h2
               id="features-heading"
-              className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 dark:from-blue-300 dark:to-blue-500"
+              className="text-4xl md:text-5xl font-bold mb-6"
             >
-              Why Choose CodePulse?
+              Why Choose <GradientText>CodePulse</GradientText>?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Our platform is designed to help developers save time and improve
@@ -359,7 +563,7 @@ export default function Home() {
                 <div className="text-blue-600 dark:text-blue-400 mb-6">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12"
+                    className="h-14 w-14"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -387,7 +591,7 @@ export default function Home() {
                 <div className="text-blue-600 dark:text-blue-400 mb-6">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12"
+                    className="h-14 w-14"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -415,7 +619,7 @@ export default function Home() {
                 <div className="text-blue-600 dark:text-blue-400 mb-6">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12"
+                    className="h-14 w-14"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -458,9 +662,9 @@ export default function Home() {
           >
             <h2
               id="snippets-heading"
-              className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-purple-600 dark:from-blue-300 dark:to-purple-400"
+              className="text-4xl md:text-5xl font-bold mb-6"
             >
-              Popular Snippets
+              Popular <GradientText>Snippets</GradientText>
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Discover some of our most used code snippets that developers love.
@@ -483,7 +687,7 @@ export default function Home() {
                   transition: { duration: 0.2 },
                 }}
               >
-                <div className="group h-full rounded-2xl bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border border-blue-100 dark:border-blue-900 overflow-hidden shadow-lg shadow-blue-500/5 transition-all duration-300">
+                <div className="group h-full rounded-2xl bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border border-blue-100 dark:border-blue-900 overflow-hidden shadow-xl shadow-blue-500/5 transition-all duration-300">
                   <div className="p-8">
                     <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                       {snippet.title}
@@ -491,7 +695,7 @@ export default function Home() {
                     <p className="text-gray-600 dark:text-gray-400 mb-6">
                       {snippet.description}
                     </p>
-                    <div className="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 relative">
+                    <div className="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 relative shadow-inner">
                       <div className="absolute top-3 right-3 flex gap-1.5">
                         <div className="w-3 h-3 rounded-full bg-red-400"></div>
                         <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
@@ -504,16 +708,28 @@ export default function Home() {
                       </pre>
                     </div>
                   </div>
-                  <div className="px-8 py-5 bg-gradient-to-r from-blue-50/50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/20 flex justify-between items-center">
+                  <div className="px-8 py-5 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 flex justify-between items-center">
                     <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
                       {snippet.language}
                     </span>
                     <Button
                       variant="ghost"
-                      className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 group-hover:translate-x-1 transition-transform"
+                      className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 group-hover:translate-x-1 transition-transform"
                       aria-label={`View ${snippet.title} snippet details`}
                     >
-                      View Details →
+                      View Details
+                      <motion.span
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          repeatType: "loop",
+                          ease: "easeInOut",
+                          delay: 2,
+                        }}
+                      >
+                        →
+                      </motion.span>
                     </Button>
                   </div>
                 </div>
@@ -615,6 +831,65 @@ export default function Home() {
                   {step.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">{step.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section
+        className="py-32 relative overflow-hidden bg-gradient-to-b from-blue-50/50 to-white dark:from-gray-900 dark:to-gray-950"
+        aria-labelledby="faq-heading"
+      >
+        <GlowEffect className="w-[600px] h-[600px] bg-purple-400/10 dark:bg-purple-500/5 -top-[300px] -right-[300px]" />
+
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <motion.div
+            className="text-center mb-10 md:mb-20"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2
+              id="faq-heading"
+              className="text-4xl md:text-5xl font-bold mb-6"
+            >
+              Frequently Asked <GradientText>Questions</GradientText>
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Find answers to some of the most common questions about CodePulse.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1  gap-2  h-max  p-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            {faqItems.map((item, index) => (
+              <motion.div key={index} variants={itemVariants}>
+                <Accordion
+                  //    title={item.question}
+                  //   isOpen={activeAccordion === item.question}
+                  // onClick={() =>
+                  //   setActiveAccordion(
+                  //     activeAccordion === item.question ? null : item.question
+                  //   )
+                  // }
+                  showDivider={false}
+                  variant="shadow"
+                >
+                  <AccordionItem
+                    title={item.question}
+                    className="text-gray-600 dark:text-gray-300"
+                  >
+                    {item.answer}
+                  </AccordionItem>
+                </Accordion>
               </motion.div>
             ))}
           </motion.div>
