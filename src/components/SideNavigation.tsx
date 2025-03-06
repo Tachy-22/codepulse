@@ -13,12 +13,86 @@ interface SideNavigationProps {
   products: ProductData[];
 }
 
+// Custom scrollable container with animated scrollbar
+const ScrollableContainer = ({
+  children,
+  isNavHovered,
+}: {
+  children: React.ReactNode;
+  isNavHovered: boolean;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scrollInfo, setScrollInfo] = useState({
+    scrollTop: 0,
+    scrollHeight: 0,
+    clientHeight: 0,
+  });
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      setScrollInfo({
+        scrollTop: container.scrollTop,
+        scrollHeight: container.scrollHeight,
+        clientHeight: container.clientHeight,
+      });
+    };
+
+    // Initial calculation
+    handleScroll();
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate scrollbar thumb position and size
+  const scrollbarHeight =
+    (scrollInfo.clientHeight / scrollInfo.scrollHeight) * 100;
+  const scrollbarTop = (scrollInfo.scrollTop / scrollInfo.scrollHeight) * 100;
+  const shouldShowScrollbar = scrollInfo.scrollHeight > scrollInfo.clientHeight;
+
+  return (
+    <div className="relative flex-1 max-h-screen">
+      <div
+        ref={containerRef}
+        className="overflow-y-auto max-h-full scrollbar-hide flex flex-col gap-3"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {children}
+      </div>
+
+      {shouldShowScrollbar && (
+        <motion.div
+          className="absolute right-0 top-0 w-1.5 h-full bg-gray-200 dark:bg-gray-800 rounded-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isNavHovered ? 0.3 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <motion.div
+            className="absolute w-1.5 rounded-full bg-gray-500 dark:bg-gray-400"
+            style={{
+              height: `${Math.max(scrollbarHeight, 10)}%`,
+              top: `${scrollbarTop}%`,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isNavHovered ? 1 : 0 }}
+            transition={{ duration: 0.2 }}
+          />
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
 const SideNavigation = ({ products }: SideNavigationProps) => {
   const dispatch = useDispatch();
   const [showSideNavOnMobile, setShowSideNavOnMobile] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAppSelector((state) => state.userSlice);
   const userId = user?.id;
+  const [isNavHovered, setIsNavHovered] = useState(false);
 
   const mySnippets = products.filter((product) => product.ownerId === userId);
   const cpSnippets = products.filter((product) => product.ownerId !== userId);
@@ -47,112 +121,112 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
   return (
     <nav
       ref={navRef}
-      className={`h-screen w-[20rem] lg:w-[16rem]  flex-col lg:flex fixed lg:static left-[-9px] lg:pr-[5rem] lg:px-0 px-2 xl:pr-[4rem] lg:z-10 z-[150] overflow-y-auto  hover-scrollbar text-gray-800 dark:text-white transition-transform duration-300 ease-in-out transform ${
+      className={`h-screen w-[20rem] lg:w-[16rem]  flex-col lg:flex fixed lg:static left-[-9px]  lg:px-0 px-2 lg:z-10 z-[150] overflow-y-auto   text-gray-800 dark:text-white transition-transform duration-300 ease-in-out transform pb-5 ${
         showSideNavOnMobile
           ? "translate-x-0"
           : "-translate-x-[calc(20rem-4.25rem)] lg:translate-x-0"
       }`}
+      onMouseEnter={() => setIsNavHovered(true)}
+      onMouseLeave={() => setIsNavHovered(false)}
     >
-      <div className="translate-x-[calc(16rem-8px)] bg-white/80 dark:bg-zinc-800  backdrop-blur-2xl w-fit fixed rounded-r-[5px] lg:hidden">
-        <motion.div
-          className="!p-2 cursor-pointer"
-          onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
-          animate={{ rotate: showSideNavOnMobile ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronRight className="h-4 w-4  " />
-        </motion.div>
-      </div>
-      <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl h-full  py-4 w-[16rem] lg:w-full ">
-        <div className="flex flex-col gap-3">
-          <div className="px-3 rounded-lg">
-            <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
-              <span>Follow</span>
-            </div>
-          </div>
-          <div className="ml-4 ">
-            <a
-              href="https://twitter.com/entekume_j"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 p-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
-            >
-              <span>@entekume_j</span>
-            </a>
-          </div>
+      <ScrollableContainer isNavHovered={isNavHovered}>
+        <div className="translate-x-[calc(16rem-8px)] bg-white/80 dark:bg-zinc-800  backdrop-blur-2xl w-fit fixed rounded-r-[5px] lg:hidden">
+          <motion.div
+            className="!p-2 cursor-pointer"
+            onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
+            animate={{ rotate: showSideNavOnMobile ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronRight className="h-4 w-4  " />
+          </motion.div>
         </div>
-
-        <div className="flex flex-col gap-3">
-          <div className="px-3 rounded-lg">
-            <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
-              <span>Installations</span>
+        <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl h-full  py-4 w-[16rem] lg:w-full mb-5">
+          <div className="flex flex-col gap-3">
+            <div className="px-3 rounded-lg">
+              <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
+                <span>Follow</span>
+              </div>
+            </div>
+            <div className="ml-4 ">
+              <a
+                href="https://twitter.com/entekume_j"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 p-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
+              >
+                <span>@entekume_j</span>
+              </a>
             </div>
           </div>
-          <div className="ml-4 flex flex-col gap-3 text-sm">
-            <Link
-              onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
-              href="/products/nextjs-installation"
-              className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-            >
-              Install Next.js
-            </Link>
-            <Link
-              onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
-              href="/products/stripe-installation"
-              className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-            >
-              Install Stripe
-            </Link>
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="px-3 rounded-lg">
-            <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
-              <span>CP Snippets</span>
+          <div className="flex flex-col gap-3">
+            <div className="px-3 rounded-lg">
+              <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
+                <span>Installations</span>
+              </div>
             </div>
-          </div>
-          <div className="ml-4 flex flex-col gap-3 max-h-full overflow-y-auto hover-scrollbar text-sm">
-            {cpSnippets.map((product) => (
+            <div className="ml-4 flex flex-col gap-3 text-sm">
               <Link
                 onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
-                key={product.id}
-                href={`/products/${product.id}`}
-                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 "
+                href="/products/nextjs-installation"
+                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
               >
-                {product.title}
+                Install Next.js
               </Link>
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          <div className="px-3 rounded-lg">
-            <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
-              <span>My Snippets</span>
+              <Link
+                onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
+                href="/products/stripe-installation"
+                className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Install Stripe
+              </Link>
             </div>
           </div>
-          <div className="ml-4 flex flex-col gap-3 max-h-full overflow-y-auto hover-scrollbar text-sm">
-            {mySnippets.map((product) => (
-              <div className="w-full" key={product.id}>
+
+          <div className="flex flex-col gap-3">
+            <div className="px-3 rounded-lg">
+              <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
+                <span>CP Snippets</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4" >
+              {cpSnippets.map((product) => (
                 <Link
                   onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
+                  key={product.id}
                   href={`/products/${product.id}`}
-                  className="block px-2 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 "
+                  className="block px-2 ml-4 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
                 >
                   {product.title}
                 </Link>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <div className="px-3 rounded-lg">
+              <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">
+                <span>My Snippets</span>
               </div>
-            ))}
-            <div
-              className=""
-           
-            >
-              {" "}
-              {userId && <AddSnippetModal showAsMenuItem />}
+            </div>
+            <div>
+              {mySnippets.map((product) => (
+                <div className="w-full" key={product.id}>
+                  <Link
+                    onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
+                    href={`/products/${product.id}`}
+                    className="block px-2 ml-4 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    {product.title}
+                  </Link>
+                </div>
+              ))}
+              <div className="mr-4">
+                {userId && <AddSnippetModal showAsMenuItem />}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </ScrollableContainer>
     </nav>
   );
 };

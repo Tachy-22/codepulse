@@ -2,8 +2,8 @@
 import { addDocument } from "@/actions/firebase/addDocument";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Send, PlusCircle, Trash } from "lucide-react";
-import { Button, Input, Textarea, Switch } from "@heroui/react";
+import { Send, PlusCircle, Trash, Info } from "lucide-react";
+import { Button, Input, Textarea, Switch, Select, SelectItem, Card, CardBody, CardHeader, Divider, Tooltip } from "@heroui/react";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { updateDocument } from "@/actions/firebase/updateDocument";
 import { ProductData } from "@/types";
@@ -49,6 +49,7 @@ export default function AddProductPage({
   const router = useRouter();
   const { user } = useAppSelector((state) => state.userSlice);
   const isAdmin = user && user.role === "ADMIN";
+  
   const handleAddFile = () => {
     setFiles((prevFiles) => [...prevFiles, { title: "", code: "" }]);
   };
@@ -161,121 +162,105 @@ console.log({ result, initialData, product, path });
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen py-6">
+      <div className="max-w-7xl mx-auto px-4">
         <form onSubmit={handleSubmit} className="space-y-8 pb-[1rem]">
+          {/* Form header */}
+          <div className="mb-6 text-center">
+            <h1 className="text-2xl font-bold mb-2">
+              {initialData ? "Edit Snippet" : "Add New Snippet"}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Fill in the details below to{" "}
+              {initialData ? "update your" : "create a new"} code snippet
+            </p>
+          </div>
+
           {/* Main Content Grid */}
           <div className="grid grid-cols-12 gap-6">
             {/* Left Column - Basic Info */}
             <div className="col-span-12 lg:col-span-5 space-y-6">
-              <div className=" rounded-xl shadow-sm p-6">
-                <div className="flex justify-between items-center">
-                  {" "}
-                  <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                    Basic Information
-                  </h2>
-                  <div className="flex flex-col items-start justify-between">
+              <Card className="shadow-sm">
+                <CardHeader className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">Basic Information</h2>
+                  <div className="flex flex-col items-end">
                     <div className="flex items-center gap-3">
-                      {" "}
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-100">
-                        Privacy
+                      <label className="text-sm font-medium">
+                        {" "}
+                        <span className="text-sm">
+                          {privacy === "PUBLIC" ? "Public" : "Private"}
+                        </span>
                       </label>
                       <Switch
-                      defaultChecked
-                        checked={privacy === "PUBLIC"}
+                        defaultSelected
+                        isSelected={privacy === "PUBLIC"}
                         onValueChange={(checked) =>
                           setPrivacy(checked ? "PUBLIC" : "PRIVATE")
                         }
                         value={privacy}
-                        className="border rounded-full"
+                        size="sm"
                       />
                     </div>
-
-                    <span className="text-sm text-gray-500">
-                      {privacy === "PUBLIC" ? "Public" : "Private"}
-                    </span>
                   </div>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div>
+                </CardHeader>
+                <CardBody>
+                  <div className="flex flex-col gap-5">
                     <Input
-                      label=" Snippet Title"
+                      label="Snippet Title"
                       type="text"
                       variant="bordered"
                       name="title"
-                      placeholder="Enter snippet title"
+                      placeholder="Enter a descriptive title"
                       labelPlacement="outside"
                       disabled={isLoading}
                       required
                       defaultValue={initialData?.title || ""}
+                      startContent={
+                        <Tooltip content="A clear title helps others find your snippet">
+                          <Info className="h-4 w-4 text-gray-400" />
+                        </Tooltip>
+                      }
                     />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Category
-                    </label>
-                    <div className="relative w-full">
-                      <select
-                        name="category"
-                        disabled={isLoading}
-                        required
-                        className="w-full px-4 py-2.5 text-sm rounded-lg bg-white dark:bg-gray-900
-      border border-gray-300 dark:border-gray-700
-      text-gray-900 dark:text-gray-100
-      focus:border-blue-500 dark:focus:border-blue-400
-      focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-      disabled:opacity-50 disabled:cursor-not-allowed
-      transition-all duration-200 ease-in-out
-      hover:border-gray-400 dark:hover:border-gray-600
-      appearance-none cursor-pointer"
-                        defaultValue={
-                          (initialData?.category as
-                            | string
-                            | number
-                            | readonly string[]
-                            | undefined) || ""
-                        }
-                      >
-                        <option
-                          value=""
-                          className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2"
-                        >
-                          Select a category
-                        </option>
-                        {CATEGORIES.map((category) => (
-                          <option
-                            key={category.value}
-                            value={category.value}
-                            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
-                          >
-                            {category.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Textarea
-                      labelPlacement="outside"
-                      label=" Description"
-                      name="description"
-                      placeholder="Enter snippet description"
+                    <Select
+                      label="Category"
+                      name="category"
                       variant="bordered"
+                      placeholder="Select a category"
+                      labelPlacement="outside"
                       disabled={isLoading}
-                      rows={3}
+                      required
+                      defaultSelectedKeys={
+                        initialData?.category
+                          ? [initialData.category as string]
+                          : []
+                      }
+                    >
+                      {CATEGORIES.map((category) => (
+                        <SelectItem key={category.value}>
+                          {category.label}
+                        </SelectItem>
+                      ))}
+                    </Select>
+
+                    <Textarea
+                      label="Description"
+                      name="description"
+                      placeholder="Explain what your snippet does and how it helps"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      disabled={isLoading}
+                      rows={4}
                       defaultValue={initialData?.description || ""}
                     />
-                  </div>
-                  <div>
+
                     <Input
-                      labelPlacement="outside"
-                      label="     Price (USD)"
+                      label="Price (USD)"
                       type="number"
                       name="price"
                       variant="bordered"
                       placeholder="0.00"
+                      labelPlacement="outside"
                       disabled={isLoading || !isAdmin}
                       value={!isAdmin ? "0" : undefined}
                       required
@@ -284,391 +269,447 @@ console.log({ result, initialData, product, path });
                           ? (initialData.price / 100).toString()
                           : "0"
                       }
+                      startContent={<span>$</span>}
+                      endContent={
+                        !isAdmin && (
+                          <Tooltip content="Only admins can set prices">
+                            <Info className="h-4 w-4 text-gray-400" />
+                          </Tooltip>
+                        )
+                      }
                     />
                   </div>
-                </div>
-              </div>
+                </CardBody>
+              </Card>
 
-              {/* File Tree moved to left column */}
-              <div className=" rounded-xl shadow-sm p-6">
-                <Textarea
-                  label=" File Structure
-"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  value={fileTree}
-                  onChange={(e) => setFileTree(e.target.value)}
-                  placeholder="Enter file structure"
-                  disabled={isLoading}
-                />
-              </div>
+              <Card className="shadow-sm">
+                <CardHeader>
+                  <h2 className="text-xl font-semibold">File Structure</h2>
+                </CardHeader>
+                <CardBody>
+                  <Textarea
+                    label="Describe the file structure of your project"
+                    labelPlacement="outside"
+                    variant="bordered"
+                    value={fileTree}
+                    onChange={(e) => setFileTree(e.target.value)}
+                    placeholder="e.g.\n/src\n  /components\n    Header.tsx\n    Footer.tsx\n  /pages\n    index.tsx"
+                    rows={6}
+                    disabled={isLoading}
+                  />
+                </CardBody>
+              </Card>
             </div>
 
             {/* Right Column - Installation & Files */}
             <div className="col-span-12 lg:col-span-7 space-y-6">
-              {/* Installations Section */}
-              <div className=" rounded-xl shadow-sm p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Installation Steps
-                  </h2>
+              <Card className="shadow-sm">
+                <CardHeader className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">Installation Steps</h2>
                   <Button
                     type="button"
+                    variant="ghost"
                     isIconOnly
                     onPress={handleAddInstallation}
-                    className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400
-                    transition-colors duration-200"
+                    className="text-blue-500"
                   >
                     <PlusCircle className="h-5 w-5" />
                   </Button>
-                </div>
-                <div className="grid gap-4">
-                  {installations.map((installation, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3  transition-all duration-200"
-                    >
-                      <div>
-                        <Input
-                          label="                          Installation Title
-"
-                          variant="bordered"
-                          labelPlacement="outside"
-                          type="text"
-                          placeholder="Enter installation title"
-                          value={installation.title}
-                          onChange={(e) =>
-                            handleInstallationChange(
-                              index,
-                              "title",
-                              e.target.value
-                            )
-                          }
-                          disabled={isLoading}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Textarea
-                          variant="bordered"
-                          label="Description"
-                          labelPlacement="outside"
-                          placeholder="Enter installation description"
-                          value={installation.description}
-                          onChange={(e) =>
-                            handleInstallationChange(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          disabled={isLoading}
-                          rows={2}
-                        />
-                      </div>
-                      <div>
-                        <Textarea
-                          label="                          Installation Command
-"
-                          variant="bordered"
-                          labelPlacement="outside"
-                          placeholder="Enter installation command"
-                          value={installation.code}
-                          onChange={(e) =>
-                            handleInstallationChange(
-                              index,
-                              "code",
-                              e.target.value
-                            )
-                          }
-                          disabled={isLoading}
-                          rows={2}
-                          required
-                        />
-                      </div>
-                      <div className="flex justify-end">
-                        {installations.length > 1 && (
-                          <Button
-                            type="button"
-                            isIconOnly
-                            onPress={() => handleRemoveInstallation(index)}
-                            className="text-red-500 text-sm flex items-center space-x-1"
+                </CardHeader>
+                <CardBody>
+                  <div className="grid gap-5">
+                    {installations.map((installation, index) => (
+                      <Card
+                        key={index}
+                        className="border border-gray-200 dark:border-gray-700"
+                      >
+                        <CardBody className="space-y-4">
+                          <Input
+                            label={`Step ${index + 1} Title`}
+                            variant="bordered"
+                            labelPlacement="outside"
+                            type="text"
+                            placeholder="e.g., Install dependencies"
+                            value={installation.title}
+                            onChange={(e) =>
+                              handleInstallationChange(
+                                index,
+                                "title",
+                                e.target.value
+                              )
+                            }
                             disabled={isLoading}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                            required
+                          />
 
-              {/* Files Section */}
-              <div className=" rounded-xl shadow-sm p-6">
-                <div className="flex justify-between items-center border-b pb-2">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                    Add Files (Title & Code)
-                  </h2>
+                          <Textarea
+                            variant="bordered"
+                            label="Description"
+                            labelPlacement="outside"
+                            placeholder="Explain what this step does"
+                            value={installation.description}
+                            onChange={(e) =>
+                              handleInstallationChange(
+                                index,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            disabled={isLoading}
+                            rows={2}
+                          />
+
+                          <Textarea
+                            label="Installation Command"
+                            variant="bordered"
+                            labelPlacement="outside"
+                            placeholder="e.g., npm install @heroui/react"
+                            value={installation.code}
+                            onChange={(e) =>
+                              handleInstallationChange(
+                                index,
+                                "code",
+                                e.target.value
+                              )
+                            }
+                            disabled={isLoading}
+                            rows={2}
+                            required
+                            classNames={{
+                              innerWrapper: "font-mono",
+                            }}
+                          />
+
+                          <div className="flex justify-end">
+                            {installations.length > 1 && (
+                              <Button
+                                type="button"
+                                color="danger"
+                                variant="light"
+                                isIconOnly
+                                onPress={() => handleRemoveInstallation(index)}
+                                disabled={isLoading}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </CardBody>
+                      </Card>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+
+              <Card className="shadow-sm">
+                <CardHeader className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">Code Files</h2>
                   <Button
                     type="button"
+                    variant="ghost"
                     isIconOnly
                     onPress={handleAddFile}
-                    className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400
-                    transition-colors duration-200"
+                    className="text-blue-500"
                   >
                     <PlusCircle className="h-5 w-5" />
                   </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
-                  {files.map((file, index) => (
-                    <div
-                      key={index}
-                      className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3  transition-all duration-200"
-                    >
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          File Title
-                        </label>
-                        <Input
-                          variant="bordered"
-                          type="text"
-                          placeholder="Enter file title"
-                          value={file.title}
-                          onChange={(e) =>
-                            handleFileChange(index, "title", e.target.value)
-                          }
-                          disabled={isLoading}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Textarea
-                          variant="bordered"
-                          label="Code Snippet"
-                          placeholder="Enter code snippet"
-                          value={file.code}
-                          onChange={(e) =>
-                            handleFileChange(index, "code", e.target.value)
-                          }
-                          disabled={isLoading}
-                          rows={4}
-                          required
-                        />
-                      </div>
-                      <div className="flex justify-end">
-                        {files.length > 1 && (
-                          <Button
-                            type="button"
-                            isIconOnly
-                            onPress={() => handleRemoveFile(index)}
-                            className="text-red-500 text-sm flex items-center space-x-1"
+                </CardHeader>
+                <CardBody>
+                  <div className="grid grid-cols-1 gap-5">
+                    {files.map((file, index) => (
+                      <Card
+                        key={index}
+                        className="border border-gray-200 dark:border-gray-700"
+                      >
+                        <CardBody className="space-y-4">
+                          <Input
+                            label="File Path/Title"
+                            variant="bordered"
+                            labelPlacement="outside"
+                            type="text"
+                            placeholder="e.g., src/components/Button.tsx"
+                            value={file.title}
+                            onChange={(e) =>
+                              handleFileChange(index, "title", e.target.value)
+                            }
                             disabled={isLoading}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        )}
+                            required
+                          />
+                          <Textarea
+                            variant="bordered"
+                            label="Code"
+                            labelPlacement="outside"
+                            placeholder="Enter your code here"
+                            value={file.code}
+                            onChange={(e) =>
+                              handleFileChange(index, "code", e.target.value)
+                            }
+                            disabled={isLoading}
+                            rows={6}
+                            required
+                            classNames={{
+                              innerWrapper: "font-mono",
+                            }}
+                          />
+                          <div className="flex justify-end">
+                            {files.length > 1 && (
+                              <Button
+                                type="button"
+                                color="danger"
+                                variant="light"
+                                isIconOnly
+                                onPress={() => handleRemoveFile(index)}
+                                disabled={isLoading}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </CardBody>
+                      </Card>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
+
+            {/* Additional Information Sections */}
+            <div className="col-span-12">
+              <Card className="shadow-sm">
+                <CardHeader>
+                  <h2 className="text-xl font-semibold">
+                    Additional Information
+                  </h2>
+                </CardHeader>
+                <CardBody>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Useful Links */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-md font-medium">Useful Links</h3>
+                        <Button
+                          type="button"
+                          variant="light"
+                          isIconOnly
+                          size="sm"
+                          onPress={() =>
+                            handleAddItem(setUsefulLinks, {
+                              title: "",
+                              href: "",
+                            })
+                          }
+                          className="text-blue-500"
+                        >
+                          <PlusCircle className="h-4 w-4" />
+                        </Button>
                       </div>
+                      <Divider />
+                      {usefulLinks.map((item, index) => (
+                        <div key={index} className="space-y-3">
+                          <Input
+                            variant="bordered"
+                            size="sm"
+                            type="text"
+                            value={item.title}
+                            onChange={(e) =>
+                              handleItemChange(
+                                setUsefulLinks,
+                                index,
+                                "title",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Link Title"
+                            label="Title"
+                            labelPlacement="outside"
+                          />
+                          <div className="flex gap-2 items-center">
+                            <Input
+                              variant="bordered"
+                              size="sm"
+                              type="url"
+                              value={item.href}
+                              onChange={(e) =>
+                                handleItemChange(
+                                  setUsefulLinks,
+                                  index,
+                                  "href",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="https://example.com"
+                              label="URL"
+                              labelPlacement="outside"
+                              className="flex-1"
+                            />
+                            {usefulLinks.length > 1 && (
+                              <Button
+                                type="button"
+                                color="danger"
+                                variant="light"
+                                isIconOnly
+                                size="sm"
+                                onPress={() =>
+                                  handleRemoveItem(setUsefulLinks, index)
+                                }
+                                className="mt-6"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                          {index < usefulLinks.length - 1 && (
+                            <Divider className="my-2" />
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
 
-            {/* Useful Links */}
-            <div className=" col-span-12 rounded-xl shadow-sm p-6 md:-8 w-full">
-              <div className="space-y-4 p-6 /50 rounded-lg transition-all duration-200 w-full">
-                <div className="flex justify-between items-center border-b pb-2">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Useful Links
-                  </h3>
-                  <Button
-                    type="button"
-                    isIconOnly
-                    onPress={() =>
-                      handleAddItem(setUsefulLinks, { title: "", href: "" })
-                    }
-                    className="text-blue-500 text-sm flex items-center space-x-1"
-                  >
-                    <PlusCircle className="h-4 w-4" />
-                  </Button>
-                </div>
-                {usefulLinks.map((item, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex gap-2">
-                      <Input
-                        variant="bordered"
-                        labelPlacement="outside"
-                        type="text"
-                        value={item.title}
-                        onChange={(e) =>
-                          handleItemChange(
-                            setUsefulLinks,
-                            index,
-                            "title",
-                            e.target.value
-                          )
-                        }
-                        placeholder="Link Title"
-                      />
-                      <Input
-                        variant="bordered"
-                        type="url"
-                        value={item.href}
-                        onChange={(e) =>
-                          handleItemChange(
-                            setUsefulLinks,
-                            index,
-                            "href",
-                            e.target.value
-                          )
-                        }
-                        placeholder="URL"
-                      />
-                      {usefulLinks.length > 1 && (
+                    {/* Current Level */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-md font-medium">
+                          Current Capabilities
+                        </h3>
                         <Button
                           type="button"
+                          variant="light"
                           isIconOnly
+                          size="sm"
                           onPress={() =>
-                            handleRemoveItem(setUsefulLinks, index)
+                            handleAddItem(setCurrentLevel, { text: "" })
                           }
-                          className="text-red-500"
+                          className="text-blue-500"
                         >
-                          <Trash className="h-4 w-4" />
+                          <PlusCircle className="h-4 w-4" />
                         </Button>
-                      )}
+                      </div>
+                      <Divider />
+                      {currentLevel.map((item, index) => (
+                        <div key={index} className="flex gap-2 items-center">
+                          <Input
+                            variant="bordered"
+                            size="sm"
+                            type="text"
+                            value={item.text}
+                            onChange={(e) =>
+                              handleItemChange(
+                                setCurrentLevel,
+                                index,
+                                "text",
+                                e.target.value
+                              )
+                            }
+                            placeholder="e.g., Supports dark mode"
+                            label={`Capability ${index + 1}`}
+                            labelPlacement="outside"
+                            className="flex-1"
+                          />
+                          {currentLevel.length > 1 && (
+                            <Button
+                              type="button"
+                              color="danger"
+                              variant="light"
+                              isIconOnly
+                              size="sm"
+                              onPress={() =>
+                                handleRemoveItem(setCurrentLevel, index)
+                              }
+                              className="mt-6"
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Bottom Section - Additional Info */}
-            <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Current Level */}
-              <div className=" rounded-xl shadow-sm p-6">
-                <div className="space-y-4 p-6 /50 rounded-lg transition-all duration-200">
-                  <div className="flex justify-between items-center border-b pb-2">
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Current Level of Code
-                    </h3>
-                    <Button
-                      type="button"
-                      isIconOnly
-                      onPress={() =>
-                        handleAddItem(setCurrentLevel, { text: "" })
-                      }
-                      className="text-blue-500 text-sm flex items-center space-x-1"
-                    >
-                      <PlusCircle className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  {currentLevel.map((item, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        variant="bordered"
-                        type="text"
-                        value={item.text}
-                        onChange={(e) =>
-                          handleItemChange(
-                            setCurrentLevel,
-                            index,
-                            "text",
-                            e.target.value
-                          )
-                        }
-                        placeholder="Enter capability"
-                      />
-                      {currentLevel.length > 1 && (
+                    {/* Optimization Suggestions */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-md font-medium">
+                          Optimization Suggestions
+                        </h3>
                         <Button
                           type="button"
+                          variant="light"
                           isIconOnly
+                          size="sm"
                           onPress={() =>
-                            handleRemoveItem(setCurrentLevel, index)
+                            handleAddItem(setOptimizationSuggestions, {
+                              text: "",
+                            })
                           }
-                          className="text-red-500"
+                          className="text-blue-500"
                         >
-                          <Trash className="h-4 w-4" />
+                          <PlusCircle className="h-4 w-4" />
                         </Button>
-                      )}
+                      </div>
+                      <Divider />
+                      {optimizationSuggestions.map((item, index) => (
+                        <div key={index} className="flex gap-2 items-center">
+                          <Input
+                            variant="bordered"
+                            size="sm"
+                            type="text"
+                            value={item.text}
+                            onChange={(e) =>
+                              handleItemChange(
+                                setOptimizationSuggestions,
+                                index,
+                                "text",
+                                e.target.value
+                              )
+                            }
+                            placeholder="e.g., Use memoization to improve performance"
+                            label={`Suggestion ${index + 1}`}
+                            labelPlacement="outside"
+                            className="flex-1"
+                          />
+                          {optimizationSuggestions.length > 1 && (
+                            <Button
+                              type="button"
+                              color="danger"
+                              variant="light"
+                              isIconOnly
+                              size="sm"
+                              onPress={() =>
+                                handleRemoveItem(
+                                  setOptimizationSuggestions,
+                                  index
+                                )
+                              }
+                              className="mt-6"
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Optimization Suggestions */}
-              <div className=" rounded-xl shadow-sm p-6 md:-4">
-                <div className="space-y-4 p-6 /50 rounded-lg transition-all duration-200">
-                  <div className="flex justify-between items-center border-b pb-2">
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Optimization Suggestions
-                    </h3>
-                    <Button
-                      type="button"
-                      isIconOnly
-                      onPress={() =>
-                        handleAddItem(setOptimizationSuggestions, { text: "" })
-                      }
-                      className="text-blue-500 text-sm flex items-center space-x-1"
-                    >
-                      <PlusCircle className="h-4 w-4" />
-                    </Button>
                   </div>
-                  {optimizationSuggestions.map((item, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        variant="bordered"
-                        type="text"
-                        value={item.text}
-                        onChange={(e) =>
-                          handleItemChange(
-                            setOptimizationSuggestions,
-                            index,
-                            "text",
-                            e.target.value
-                          )
-                        }
-                        placeholder="Enter suggestion"
-                      />
-                      {optimizationSuggestions.length > 1 && (
-                        <Button
-                          type="button"
-                          isIconOnly
-                          onPress={() =>
-                            handleRemoveItem(setOptimizationSuggestions, index)
-                          }
-                          className="text-red-500"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+                </CardBody>
+              </Card>
             </div>
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full max-w-md mx-auto flex items-center justify-center space-x-2 
-            bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800
-            text-white p-4 rounded-xl transition-all duration-200 
-            disabled:from-blue-400 disabled:to-blue-400 disabled:cursor-not-allowed
-            shadow-lg hover:shadow-xl"
-          >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <>
-                <Send className="h-5 w-5" />
-                <span className="font-medium">
-                  {initialData ? "Update" : "Add"} Snippet
-                </span>
-              </>
-            )}
-          </Button>
+          <div className="flex justify-center pt-4">
+            <Button
+              type="submit"
+              color="primary"
+              disabled={isLoading}
+              className="px-8 py-2"
+              startContent={isLoading ? null : <Send className="h-5 w-5" />}
+            >
+              {isLoading ? (
+                <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : initialData ? (
+                "Update Snippet"
+              ) : (
+                "Add Snippet"
+              )}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

@@ -86,7 +86,6 @@ export default async function RootLayout({
 
   let userData = null;
   const userId = userIdFromCookie;
-  console.log({ userId });
   if (userId) {
     const result = await fetchDocument<UserData>("users", userId);
     if (result && "data" in result) {
@@ -94,7 +93,6 @@ export default async function RootLayout({
     }
   }
 
-  console.log({ userData });
   return (
     <html lang="en">
       <body
@@ -111,7 +109,7 @@ export default async function RootLayout({
               {" "}
               <HeroUiProvider>
                 <Navbar />
-                <div className="h-full   ">{children}</div>
+                <div className="h-full min-h-screen ">{children}</div>
                 <Footer />
               </HeroUiProvider>
             </ThemeProvider>
@@ -122,6 +120,4 @@ export default async function RootLayout({
   );
 }
 
-// Add this to your existing .env.local file or create it if it doesn't exist:
-// NEXT_PUBLIC_BASE_URL=http://localhost:3000
-// In production, set this to your actual domain
+

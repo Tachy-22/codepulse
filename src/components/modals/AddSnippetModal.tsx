@@ -2,7 +2,6 @@
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
   Button,
   useDisclosure,
@@ -41,15 +40,13 @@ export default function AddSnippetModal({
         size="5xl"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        className="max-h-[80vh] mt-[2rem]"
+        className="max-h-[70vh] mt-[10rem]"
         scrollBehavior="inside"
       >
-        <ModalContent className="mt-[2rem]">
+        <ModalContent className="">
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                {product ? "Edit Snippet" : "Add New Snippet"}
-              </ModalHeader>
+           
               <ModalBody>
                 <AddProductPage onClose={onClose} initialData={product} />
               </ModalBody>

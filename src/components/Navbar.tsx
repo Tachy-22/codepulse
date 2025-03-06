@@ -130,8 +130,8 @@ export default function Navbar() {
               href="/"
               className="text-xl  flex gap-3 font-bold items-center text-blue-500 dark:text-white"
             >
-              <FaCode size={24} /> <span className="lg:flex hidden">CodePulse</span>{" "}
-              <span className="lg:hidden flex">CP</span>
+              <FaCode size={24} /> <span className="md:flex hidden">CodePulse</span>{" "}
+              <span className="md:hidden flex">CP</span>
             </Link>
 
             {/* Desktop Navigation */}

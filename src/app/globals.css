@@ -29,11 +29,11 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .dark\:bg-dark {
     background-color: var(--background);
   }
-  
+
   .dark\:text-light {
     color: var(--foreground);
   }
@@ -45,35 +45,12 @@ body {
 
   /* Hide scrollbar for IE, Edge and Firefox */
   * {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-
-  .hover-scrollbar {
-    scrollbar-width: none;
     -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 
-  .hover-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hover-scrollbar:hover {
-    scrollbar-width: thin;
-    -ms-overflow-style: auto;
-  }
-
-  .hover-scrollbar:hover::-webkit-scrollbar {
-    display: block;
-    width: 8px;
-  }
-
-  .hover-scrollbar:hover::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .hover-scrollbar:hover::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 4px;
-  }
+  /* Reset the global scrollbar hiding for hover-scrollbar elements */
+ 
 }

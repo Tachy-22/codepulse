@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import { Button, Accordion, AccordionItem } from "@heroui/react";
+import Link from "next/link";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { useRouter } from "next/navigation";
 
 // SEO metadata component
 const Metadata = () => (
@@ -207,7 +210,7 @@ const GradientCard = ({
   hoverEffect?: boolean;
 }) => (
   <motion.div
-    className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}
+    className={`relative h-full rounded-2xl p-[1px] overflow-hidden ${className}`}
     whileHover={
       hoverEffect
         ? {
@@ -217,7 +220,7 @@ const GradientCard = ({
         : {}
     }
   >
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500">
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 h-full">
       <motion.div
         className="w-full h-full"
         animate={{
@@ -297,21 +300,25 @@ const GradientText = ({
   className?: string;
 }) => {
   const [supportsGradientText, setSupportsGradientText] = useState(true);
-  
+
   // Check for bg-clip-text support
   useEffect(() => {
     // Feature detection for background-clip: text
-    const tempEl = document.createElement('div');
-    if (typeof tempEl.style.backgroundClip === 'undefined' && 
-        typeof tempEl.style.webkitBackgroundClip === 'undefined') {
+    const tempEl = document.createElement("div");
+    if (
+      typeof tempEl.style.backgroundClip === "undefined" &&
+      typeof tempEl.style.webkitBackgroundClip === "undefined"
+    ) {
       setSupportsGradientText(false);
     }
   }, []);
-  
+
   if (!supportsGradientText) {
     // Fallback for browsers that don't support gradient text
     return (
-      <span className={`font-bold text-blue-600 dark:text-blue-400 ${className}`}>
+      <span
+        className={`font-bold text-blue-600 dark:text-blue-400 ${className}`}
+      >
         {children}
       </span>
     );
@@ -323,17 +330,15 @@ const GradientText = ({
       <span
         className={`bg-clip-text text-transparent bg-gradient-to-r ${from} ${via} ${to}`}
         style={{
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent'
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
         }}
       >
         {children}
       </span>
-      
+
       {/* Hidden backup text that will show if the gradient fails */}
-      <span className="sr-only">
-        {children}
-      </span>
+      <span className="sr-only">{children}</span>
     </span>
   );
 };
@@ -341,6 +346,8 @@ const GradientText = ({
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const heroRef = useRef(null);
+  const router = useRouter();
+  const { user } = useAppSelector((state) => state.userSlice);
 
   // Hydration fix
   useEffect(() => {
@@ -356,7 +363,7 @@ export default function Home() {
       {/* Enhanced Hero Section with Particles */}
       <section
         ref={heroRef}
-        className="relative max-h-screen h-fit py-[15rem] w-full flex items-center justify-center overflow-hidden "
+        className="relative max-h-screen h-fit py-[15rem] md:py-[20rem] w-full flex items-center justify-center overflow-hidden "
         aria-labelledby="hero-heading"
       >
         <div className="absolute  inset-0 bg-gradient-to-b from-blue-50/80 to-white dark:from-gray-900 dark:to-gray-950">
@@ -400,11 +407,20 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.8 }}
             >
-              <ShinyButton primary aria-label="Browse code snippets">
+              <ShinyButton
+                onClick={() => {
+                  router.push("/products");
+                }}
+                primary
+                aria-label="Browse code snippets"
+              >
                 Browse Snippets
               </ShinyButton>
 
               <ShinyButton
+                onClick={() => {
+                  router.push(user ? "/products" : "/auth/login");
+                }}
                 primary={false}
                 aria-label="Share your code snippets"
               >
@@ -483,7 +499,7 @@ export default function Home() {
 
         {/* Stats floating card */}
         <motion.div
-          className="absolute bottom-[2%] left-[5%] lg:bottom-[10%] lg:left-[15%] opacity-0 hidden md:block"
+          className="absolute bottom-[2%] left-[5%] lg:bottom-[10%] lg:left-[5%] opacity-0 hidden md:block"
           animate={{ opacity: [0, 0.9], y: [50, 0] }}
           transition={{ delay: 1.8, duration: 1 }}
         >
@@ -525,7 +541,7 @@ export default function Home() {
       >
         <GlowEffect className="w-[600px] h-[600px] bg-blue-400/10 dark:bg-blue-500/5 -bottom-[300px] -left-[300px]" />
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="max-w-7xl w-full mx-auto px-4 md:px-6 relative z-10">
           <motion.div
             className="text-center mb-20"
             initial={{ opacity: 0 }}
@@ -552,7 +568,7 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            <motion.div variants={itemVariants}>
+            <motion.div variants={itemVariants} className="h-full">
               <GradientCard>
                 <div className="text-blue-600 dark:text-blue-400 mb-6">
                   <svg
@@ -580,7 +596,7 @@ export default function Home() {
               </GradientCard>
             </motion.div>
 
-            <motion.div variants={itemVariants}>
+            <motion.div className="h-full" variants={itemVariants}>
               <GradientCard>
                 <div className="text-blue-600 dark:text-blue-400 mb-6">
                   <svg
@@ -608,7 +624,7 @@ export default function Home() {
               </GradientCard>
             </motion.div>
 
-            <motion.div variants={itemVariants}>
+            <motion.div className="h-full" variants={itemVariants}>
               <GradientCard>
                 <div className="text-blue-600 dark:text-blue-400 mb-6">
                   <svg
@@ -646,7 +662,7 @@ export default function Home() {
       >
         <GlowEffect className="w-[600px] h-[600px] bg-purple-400/10 dark:bg-purple-500/5 -top-[300px] -right-[300px]" />
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="max-w-7xl w-full mx-auto px-4 md:px-6 relative z-10">
           <motion.div
             className="text-center mb-20"
             initial={{ opacity: 0 }}
@@ -666,7 +682,7 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-10"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-10"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -680,16 +696,17 @@ export default function Home() {
                   y: -5,
                   transition: { duration: 0.2 },
                 }}
+                className="h-full"
               >
-                <div className="group h-full rounded-2xl bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border border-blue-100 dark:border-blue-900 overflow-hidden shadow-xl shadow-blue-500/5 transition-all duration-300">
-                  <div className="p-8">
+                <div className="group rounded-2xl bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border border-blue-100 dark:border-blue-900 overflow-hidden shadow-xl shadow-blue-500/5 transition-all duration-300 h-full">
+                  <div className="p-4 lg:p-8 h-full">
                     <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                       {snippet.title}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-6">
                       {snippet.description}
                     </p>
-                    <div className="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 relative shadow-inner">
+                    <div className="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 relative shadow-inner h-full">
                       <div className="absolute top-3 right-3 flex gap-1.5">
                         <div className="w-3 h-3 rounded-full bg-red-400"></div>
                         <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
@@ -702,7 +719,7 @@ export default function Home() {
                       </pre>
                     </div>
                   </div>
-                  <div className="px-8 py-5 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 flex justify-between items-center">
+                  {/* <div className="px-8 py-5 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 flex justify-between items-center">
                     <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
                       {snippet.language}
                     </span>
@@ -725,7 +742,7 @@ export default function Home() {
                         →
                       </motion.span>
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               </motion.div>
             ))}
@@ -738,13 +755,13 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button
-              size="lg"
+            <Link
+              href="/products"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white dark:from-blue-500 dark:to-purple-500 shadow-xl shadow-blue-500/20 dark:shadow-blue-500/10 rounded-xl px-8 py-4 text-lg font-medium transition-all duration-300 transform hover:scale-105"
               aria-label="Browse all available code snippets"
             >
               Browse All Snippets
-            </Button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -942,19 +959,14 @@ export default function Home() {
               transition={{ duration: 0.2 }}
             >
               <Button
+                onPress={() => {
+                  router.push(user ? "/products" : "/auth/login");
+                }}
                 size="lg"
                 className="bg-white text-blue-600 hover:bg-blue-50 dark:bg-blue-100 dark:text-blue-800"
                 aria-label="Get started with CodePulse"
               >
                 Get Started
-              </Button>
-              <Button
-                size="lg"
-                variant="bordered"
-                className="border-white text-white hover:bg-blue-700/50 dark:hover:bg-blue-800/50"
-                aria-label="Learn more about how CodePulse works"
-              >
-                Learn More
               </Button>
             </motion.div>
           </motion.div>
