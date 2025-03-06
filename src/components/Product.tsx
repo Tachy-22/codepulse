@@ -102,12 +102,14 @@ const Product = ({ product }: { product: ProductData }) => {
   };
 
   return (
-    <div className="py-6">
+    <div className="py-6 relative">
       <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full ">
         {/* Replace with NextUI Dropdown */}
-        <div className="flex items-center gap-2 absolute right-5 border rounded-full dark:bg-black bg-white">
+        <div className="flex items-center gap-2 absolute -top-0 right-2 border-b pb-2 dark:bg-black bg-white">
+          <AddSnippetModal showAsMenuItem product={product} />
+
           <Dropdown>
-            <DropdownTrigger>
+            <DropdownTrigger className="border rounded-full">
               <Button
                 isIconOnly
                 variant="light"
@@ -151,9 +153,6 @@ const Product = ({ product }: { product: ProductData }) => {
                     onClick={() => setIsDeleteModalOpen(true)}
                   >
                     Delete Product
-                  </DropdownItem>
-                  <DropdownItem key="add-snippet" className="p-0">
-                    <AddSnippetModal showAsMenuItem product={product} />
                   </DropdownItem>
                 </>
               ) : null}

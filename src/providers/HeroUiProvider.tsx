@@ -12,7 +12,7 @@ export default function HeroUiProvider({
   return (
     <HeroUIProvider>
       {" "}
-      <ToastProvider placement={"top-right"} />
+      <ToastProvider placement={"bottom-right"} />
       {children}
     </HeroUIProvider>
   );

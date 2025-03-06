@@ -7,7 +7,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import AddProductPage from "../forms/AddProductForm";
-import { Plus } from "lucide-react";
+import { Pen, Plus } from "lucide-react";
 import { ProductData } from "@/types";
 
 interface AddSnippetModalProps {
@@ -33,8 +33,13 @@ export default function AddSnippetModal({
         }`}
         onPress={onOpen}
       >
-        <Plus size={18} className={showAsMenuItem ? "m" : ""} />
-        <div className=""> {product ? "Edit Snippet" : "Add Snippet"}</div>
+        {product ? (
+          <Pen size={14} className={showAsMenuItem ? "m" : ""} />
+        ) : (
+          <Plus size={18} className={showAsMenuItem ? "m" : ""} />
+        )}
+
+        <div className=""> {product ? "Edit" : "Add Snippet"}</div>
       </Button>
       <Modal
         size="5xl"
@@ -46,7 +51,6 @@ export default function AddSnippetModal({
         <ModalContent className="">
           {(onClose) => (
             <>
-           
               <ModalBody>
                 <AddProductPage onClose={onClose} initialData={product} />
               </ModalBody>
