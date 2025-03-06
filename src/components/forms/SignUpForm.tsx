@@ -10,7 +10,7 @@ import { createUser } from "@/actions/firebase/users";
 import { PasswordInput } from "../ui/PasswordInput";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithGoogle } from "@/lib/auth";
-import { Input } from "@heroui/react";
+import { Input, addToast } from "@heroui/react";
 import { getErrorMessage } from "@/lib/utils";
 
 interface PasswordCriteriaProps {
@@ -135,17 +135,37 @@ export default function SignUpForm() {
         });
 
         if (userResult.success) {
+          addToast({
+            title: "Account created",
+            description: "Your account has been created successfully. Please log in.",
+            promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+          });
           window.location.href = "/auth/login";
         } else {
           setError(userResult.error || "Failed to create user profile");
+          addToast({
+            title: "Error creating account",
+            description: userResult.error || "Failed to create user profile",
+            promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+          });
         }
       } else {
         setError(getErrorMessage(result.error || ""));
+        addToast({
+          title: "Registration failed",
+          description: getErrorMessage(result.error || ""),
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       }
     } catch (error: unknown) {
       console.error("Registration error:", error);
       const errorMessage = error instanceof Error ? error.message : "";
       setError(getErrorMessage(errorMessage));
+      addToast({
+        title: "Registration error",
+        description: getErrorMessage(errorMessage),
+        promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+      });
     } finally {
       setIsLoading(false);
     }
@@ -157,13 +177,28 @@ export default function SignUpForm() {
     try {
       const result = await signInWithGoogle();
       if (result.success) {
+        addToast({
+          title: "Sign in successful",
+          description: "You have successfully signed in with Google",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
         // Immediately redirect to products page instead of login
         window.location.href = "/products";
       } else {
         setError(result.error || "Something went wrong");
+        addToast({
+          title: "Google sign in failed",
+          description: result.error || "Something went wrong",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       }
     } catch (error) {
       setError("Failed to sign in with Google");
+      addToast({
+        title: "Google sign in failed",
+        description: "Failed to sign in with Google",
+        promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+      });
       console.error(error);
     } finally {
       setIsGoogleLoading(false);

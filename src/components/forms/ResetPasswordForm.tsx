@@ -7,6 +7,7 @@ import { Lock, Loader, ArrowLeft } from "lucide-react";
 import { resetPassword } from "@/actions/firebase/auth";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { addToast } from "@heroui/react";
 
 export default function ResetPasswordForm() {
   const [error, setError] = useState("");
@@ -26,6 +27,11 @@ export default function ResetPasswordForm() {
   const onSubmit = async (data: { password: string }) => {
     if (!oobCode) {
       setError("Invalid reset link");
+      addToast({
+        title: "Invalid reset link",
+        description: "The password reset link is invalid or has expired",
+        promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+      });
       return;
     }
 
@@ -35,11 +41,26 @@ export default function ResetPasswordForm() {
       const result = await resetPassword(oobCode, data.password);
       if (result.success) {
         setSuccess(true);
+        addToast({
+          title: "Password reset successful",
+          description: "Your password has been successfully reset",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       } else {
         setError(result.error || "Something went wrong");
+        addToast({
+          title: "Password reset failed",
+          description: result.error || "Something went wrong with the password reset",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       }
     } catch (err: unknown) {
       setError(`"Something went wrong" ${err}`);
+      addToast({
+        title: "Error",
+        description: `Something went wrong with the password reset: ${err}`,
+        promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+      });
     } finally {
       setIsLoading(false);
     }

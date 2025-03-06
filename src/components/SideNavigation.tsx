@@ -94,8 +94,16 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
   const userId = user?.id;
   const [isNavHovered, setIsNavHovered] = useState(false);
 
-  const mySnippets = products.filter((product) => product.ownerId === userId);
-  const cpSnippets = products.filter((product) => product.ownerId !== userId);
+  const mySnippets = products.filter((product) => {
+    if (userId) {
+      return product.ownerId === userId;
+    } else return false;
+  });
+  const cpSnippets = products.filter((product) => {
+    if (userId) {
+      return product.ownerId !== userId;
+    } else return product;
+  });
 
   useEffect(() => {
     try {
@@ -189,7 +197,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
                 <span>CP Snippets</span>
               </div>
             </div>
-            <div className="flex flex-col gap-4" >
+            <div className="flex flex-col gap-4">
               {cpSnippets.map((product) => (
                 <Link
                   onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
@@ -208,13 +216,13 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
                 <span>My Snippets</span>
               </div>
             </div>
-            <div>
+            <div className="flex flex-col gap-4">
               {mySnippets.map((product) => (
                 <div className="w-full" key={product.id}>
                   <Link
                     onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
                     href={`/products/${product.id}`}
-                    className="block px-2 ml-4 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    className="block px-2 ml-4 text-gray-800 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
                   >
                     {product.title}
                   </Link>

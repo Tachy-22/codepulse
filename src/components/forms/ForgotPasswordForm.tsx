@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Loader, ArrowLeft } from "lucide-react";
 import { forgotPassword } from "@/actions/firebase/auth";
 import Link from "next/link";
+import { addToast } from "@heroui/react";
 
 export default function ForgotPasswordForm() {
   const [error, setError] = useState("");
@@ -29,8 +30,18 @@ export default function ForgotPasswordForm() {
       const result = await forgotPassword(data.email);
       if (result.success) {
         setSuccess(true);
+        addToast({
+          title: "Email sent",
+          description: "A password reset link has been sent to your email address",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       } else {
         setError(result.error || "Something went wrong");
+        addToast({
+          title: "Error",
+          description: result.error || "Failed to send password reset email",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       }
     } finally {
       setIsLoading(false);

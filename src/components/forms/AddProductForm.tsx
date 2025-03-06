@@ -3,7 +3,20 @@ import { addDocument } from "@/actions/firebase/addDocument";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, PlusCircle, Trash, Info } from "lucide-react";
-import { Button, Input, Textarea, Switch, Select, SelectItem, Card, CardBody, CardHeader, Divider, Tooltip } from "@heroui/react";
+import {
+  Button,
+  Input,
+  Textarea,
+  Switch,
+  Select,
+  SelectItem,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Tooltip,
+  addToast,
+} from "@heroui/react";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { updateDocument } from "@/actions/firebase/updateDocument";
 import { ProductData } from "@/types";
@@ -151,11 +164,29 @@ export default function AddProductPage({
       const result = await (initialData
         ? updateDocument("products", initialData.id, product, path)
         : addDocument("products", product, new Date().toISOString(), path));
-console.log({ result, initialData, product, path });
+      
       if ("id" in result) {
+        addToast({
+          title: initialData ? "Product updated" : "Product created",
+          description: initialData ? "Your product has been updated successfully" : "Your product has been created successfully",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
         onClose();
         router.push(path);
+      } else {
+        addToast({
+          title: "Error",
+          description: "Failed to save product. Please try again.",
+          promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+        });
       }
+    } catch (error) {
+      console.error("Error saving product:", error);
+      addToast({
+        title: "Error",
+        description: "An unexpected error occurred while saving the product",
+        promise: new Promise((resolve) => setTimeout(resolve, 3000)),
+      });
     } finally {
       setIsLoading(false);
     }
