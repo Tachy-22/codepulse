@@ -20,7 +20,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-white dark:bg-black text-white py-[5rem] border-t border-gray-500 dark:border-gray-700">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-10 lg:px-6 ">
         <div className="flex flex-col gap-6 md:flex-row justify-between items-start space-y-8 md:space-y-0">
           {/* Left Section */}
           <div className="space-y-3">

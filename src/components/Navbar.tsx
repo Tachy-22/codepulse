@@ -42,15 +42,15 @@ export default function Navbar() {
   );
 
   const NavLinks = () => (
-    <div className="flex items-center gap-4">
+    <div className="flex md:flex-row flex-col md:items-center gap-4 w-full ">
       <Link
         onClick={() => setIsOpen(false)}
         href="/products"
-        className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 "
+        className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 md:flex hidden  "
       >
         Snippets{" "}
       </Link>
-      <div className=""> {userId && <AddSnippetModal />}</div>
+      <div className=" "> {userId && <AddSnippetModal />}</div>
     </div>
   );
 
@@ -107,7 +107,13 @@ export default function Navbar() {
               </Button>
             </div>
             <div className="flex flex-col space-y-4">
-              <NavLinks />
+              <Link
+                onClick={() => setIsOpen(false)}
+                href="/products"
+                className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400   "
+              >
+                Snippets{" "}
+              </Link>
             </div>
           </motion.div>
         </>
@@ -118,7 +124,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`border-b sticky w-full top-0 backdrop-blur-lg bg-white/80 dark:bg-black/80 z-[1000] ${
+        className={`border-b sticky w-full top-0 backdrop-blur-lg bg-white/80 dark:bg-black/80 shadow-lg z-[1000] ${
           scrolled
             ? " border-zinc-200/50 dark:border-zinc-700/50 shadow-sm"
             : "border-transparent"
@@ -130,12 +136,13 @@ export default function Navbar() {
               href="/"
               className="text-xl  flex gap-3 font-bold items-center text-blue-500 dark:text-white"
             >
-              <FaCode size={24} /> <span className="md:flex hidden">CodePulse</span>{" "}
+              <FaCode size={24} />{" "}
+              <span className="md:flex hidden">CodePulse</span>{" "}
               <span className="md:hidden flex">CP</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="md:flex hidden items-center justify-start  w-full">
+            <div className="flex items-center justify-start  w-full">
               {" "}
               <NavLinks />
             </div>

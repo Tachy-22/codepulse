@@ -54,10 +54,10 @@ const ScrollableContainer = ({
   const shouldShowScrollbar = scrollInfo.scrollHeight > scrollInfo.clientHeight;
 
   return (
-    <div className="relative flex-1 max-h-screen">
+    <div className="relative w-[16rem]  flex-1 min-h-full  h-screen bg-white/50 lg:dark:bg-transparent dark:bg-black/50  backdrop-blur-2xl">
       <div
         ref={containerRef}
-        className="overflow-y-auto max-h-full scrollbar-hide flex flex-col gap-3"
+        className="overflow-y-auto min-h-full h-full scrollbar-hide flex flex-col gap-3 "
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {children}
@@ -65,7 +65,7 @@ const ScrollableContainer = ({
 
       {shouldShowScrollbar && (
         <motion.div
-          className="absolute right-0 top-0 w-1.5 h-full bg-gray-200 dark:bg-gray-800 rounded-full"
+          className="absolute lg:right-0 right-3 top-0 w-1.5 h-full bg-gray-200 dark:bg-gray-800 rounded-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: isNavHovered ? 0.3 : 0 }}
           transition={{ duration: 0.2 }}
@@ -129,7 +129,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
   return (
     <nav
       ref={navRef}
-      className={`h-screen w-[20rem] lg:w-[16rem]  flex-col lg:flex fixed lg:static left-[-9px]  lg:px-0 px-2 lg:z-10 z-[150] overflow-y-auto   text-gray-800 dark:text-white transition-transform duration-300 ease-in-out transform pb-5 ${
+      className={`h-screen  min-h-screen w-[18.5rem] lg:w-[16rem]  flex-col lg:flex fixed  lg:static left-[-9px]  lg:px-0 px-2 lg:z-10 z-[150] overflow-y-auto   text-gray-800 dark:text-white transition-transform duration-300 ease-in-out transform pb-5 ${
         showSideNavOnMobile
           ? "translate-x-0"
           : "-translate-x-[calc(20rem-4.25rem)] lg:translate-x-0"
@@ -138,7 +138,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
       onMouseLeave={() => setIsNavHovered(false)}
     >
       <ScrollableContainer isNavHovered={isNavHovered}>
-        <div className="translate-x-[calc(16rem-8px)] bg-white/80 dark:bg-zinc-800  backdrop-blur-2xl w-fit fixed rounded-r-[5px] lg:hidden">
+        <div className="translate-x-[calc(16rem-8px)] top-7 w-fit fixed h-fit bg-slate-100 lg:dark:bg-transparent dark:bg-stone-700 rounded-[5px] lg:hidden z-[200]">
           <motion.div
             className="!p-2 cursor-pointer"
             onClick={() => setShowSideNavOnMobile(!showSideNavOnMobile)}
@@ -148,7 +148,7 @@ const SideNavigation = ({ products }: SideNavigationProps) => {
             <ChevronRight className="h-4 w-4  " />
           </motion.div>
         </div>
-        <div className="flex flex-col gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl h-full  py-4 w-[16rem] lg:w-full mb-5">
+        <div className="flex flex-col gap-4 h-full  py-6 w-[16rem] lg:w-full mb-5">
           <div className="flex flex-col gap-3">
             <div className="px-3 rounded-lg">
               <div className="flex items-center gap-2 text-gray-950 dark:text-gray-100">

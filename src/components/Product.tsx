@@ -56,18 +56,23 @@ const Product = ({ product }: { product: ProductData }) => {
   };
 
   const handleShareToX = () => {
-    const text = `🚀 Just dropped a sleek code snippet! Check it out here: ${window.location.href} 💻✨\n\nIt's clean, efficient, and ready to roll. Let me know what you think! 👀🔥 #Coding #DevLife #codepulse`;
+    const isOwnerOrAdmin = user && (ownerId === user.id );
+    
+    const text = isOwnerOrAdmin
+      ? `🚀 Just created and shared this code snippet! Check out my work: ${window.location.href} 💻✨\n\nHope you find it useful for your projects. Let me know what you think! 👀🔥 #Coding #DevLife #codepulse`
+      : `🚀 Found this awesome code snippet! Check it out here: ${window.location.href} 💻✨\n\nIt's clean, efficient, and ready to use. #Coding #DevLife #codepulse`;
+    
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       text
     )}`;
-
+  
     // Center popup window
     const width = 550;
     const height = 420;
     const left = window.screen.width / 2 - width / 2;
     const right = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
-
+  
     // Open popup window with centered position
     window.open(
       shareUrl,
@@ -82,9 +87,9 @@ const Product = ({ product }: { product: ProductData }) => {
       if (!id) {
         throw new Error("Product ID is missing");
       }
-      
+
       const result = await deleteDocument("products", id, "/dashboard");
-      
+
       if ("success" in result) {
         // Show success notification if needed
         router.push("/dashboard");
@@ -102,11 +107,13 @@ const Product = ({ product }: { product: ProductData }) => {
   };
 
   return (
-    <div className="py-6 relative">
+    <div className="py-6 relative px-3 lg:px-0">
       <div className="max-w-4xl mx-auto flex flex-col gap-12 h-full ">
         {/* Replace with NextUI Dropdown */}
-        <div className="flex items-center gap-2 absolute -top-0 right-2 border-b pb-2 dark:bg-black bg-white">
-          <AddSnippetModal showAsMenuItem product={product} />
+        <div className="flex items-center justify-end gap-2  border-b pb-2 dark:bg-black bg-white">
+          {user && (ownerId === user.id || user.role === "ADMIN") && (
+            <AddSnippetModal  product={product} />
+          )}
 
           <Dropdown>
             <DropdownTrigger className="border rounded-full">
@@ -289,7 +296,7 @@ const Product = ({ product }: { product: ProductData }) => {
               {usefulLinks.map((link, index) => (
                 <div
                   key={index}
-                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10 "
+                  className="relative pl-8 pb-8 last:pb-0 lg:ml-10 ml-4"
                 >
                   <div className="absolute left-0 top-[6px] h-full w-[2px] bg-gradient-to-b from-indigo-500 to-indigo-300 dark:from-indigo-400 dark:to-indigo-600" />
                   <div className="absolute left-[-7px] top-[6px] h-4 w-4 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-lg shadow-indigo-500/20" />
@@ -297,7 +304,7 @@ const Product = ({ product }: { product: ProductData }) => {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="ml-4 flex items-center space-x-3 rounded-xl0 px-4 transition-all duration-300 "
+                    className=" flex items-center space-x-3 rounded-xl0 px-4 transition-all duration-300 "
                   >
                     <Link2 className="h-5 w-5 flex-shrink-0 text-indigo-500" />
                     <span className="text-gray-600 dark:text-gray-300 w-fit">
