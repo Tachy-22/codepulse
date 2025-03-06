@@ -29,7 +29,10 @@ export default function HomeLoading() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
+              <div
+                key={i}
+                className="rounded-2xl border border-gray-200 dark:border-gray-800 p-6"
+              >
                 <Skeleton className="h-14 w-14 mb-6" />
                 <Skeleton className="h-6 w-3/4 mb-4" />
                 <Skeleton className="h-4 w-full mb-2" />
@@ -50,7 +53,10 @@ export default function HomeLoading() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              <div
+                key={i}
+                className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden"
+              >
                 <div className="p-6">
                   <Skeleton className="h-7 w-3/4 mb-3" />
                   <Skeleton className="h-4 w-full mb-6" />
@@ -64,7 +70,7 @@ export default function HomeLoading() {
               </div>
             ))}
           </div>
-          
+
           <div className="text-center mt-16">
             <Skeleton className="h-12 w-48 mx-auto" />
           </div>

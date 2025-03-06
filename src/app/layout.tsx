@@ -11,6 +11,7 @@ import { User } from "@/types";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Footer from "@/components/Footer";
 import HeroUiProvider from "@/providers/HeroUiProvider";
+import HomeLoading from "@/components/HomeLoading";
 
 interface UserData extends User {
   [key: string]: unknown;
@@ -29,36 +30,39 @@ const geistMono = localFont({
 const inter = Inter({ subsets: ["latin"] });
 
 // Determine the base URL for metadata
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
 
 export const metadata: Metadata = {
   title: {
     default: "CodePulse | Code Snippet Sharing Platform",
-    template: "%s | CodePulse"
+    template: "%s | CodePulse",
   },
-  description: "Discover, share and collaborate on code snippets with developers worldwide",
+  description:
+    "Discover, share and collaborate on code snippets with developers worldwide",
   metadataBase: new URL(baseUrl),
   openGraph: {
-    type: 'website',
-    siteName: 'CodePulse',
-    locale: 'en_US',
+    type: "website",
+    siteName: "CodePulse",
+    locale: "en_US",
     url: baseUrl,
     title: "CodePulse | Code Snippet Sharing Platform",
-    description: "Discover, share and collaborate on code snippets with developers worldwide",
+    description:
+      "Discover, share and collaborate on code snippets with developers worldwide",
     images: [
       {
         url: `${baseUrl}/api/og?title=CodePulse`,
         width: 1200,
         height: 630,
-        alt: "CodePulse Platform"
-      }
+        alt: "CodePulse Platform",
+      },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    creator: '@entekume_j',
+    card: "summary_large_image",
+    creator: "@entekume_j",
     title: "CodePulse | Code Snippet Sharing Platform",
-    description: "Discover, share and collaborate on code snippets with developers worldwide",
+    description:
+      "Discover, share and collaborate on code snippets with developers worldwide",
     images: [`${baseUrl}/api/og?title=CodePulse`],
   },
   robots: {
@@ -67,12 +71,12 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-    }
+    },
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 
@@ -109,7 +113,9 @@ export default async function RootLayout({
               {" "}
               <HeroUiProvider>
                 <Navbar />
-                <div className="h-full min-h-screen ">{children}</div>
+                <div className="h-full min-h-screen ">
+                  {children ? children : <HomeLoading />}
+                </div>
                 <Footer />
               </HeroUiProvider>
             </ThemeProvider>
@@ -119,5 +125,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-
